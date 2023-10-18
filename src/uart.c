@@ -1,29 +1,29 @@
-enum {
-    PERIPHERAL_BASE = 0xFE000000,
-    GPFSEL0         = PERIPHERAL_BASE + 0x200000,
-    GPSET0          = PERIPHERAL_BASE + 0x20001C,
-    GPCLR0          = PERIPHERAL_BASE + 0x200028,
-    GPPUPPDN0       = PERIPHERAL_BASE + 0x2000E4
-};
+enum
+{
+    GPIO_BASE = 0x3F200000, //The GPIO registers base address. for raspi2 & 3, 0x20200000 for raspi1
+    GPPUD = (GPIO_BASE + 0x94),
+    GPPUDCLK0 = (GPIO_BASE + 0x98),
 
-enum {
-    AUX_BASE        = PERIPHERAL_BASE + 0x215000,
-    AUX_IRQ         = AUX_BASE,
-    AUX_ENABLES     = AUX_BASE + 4,
-    AUX_MU_IO_REG   = AUX_BASE + 64,
-    AUX_MU_IER_REG  = AUX_BASE + 68,
-    AUX_MU_IIR_REG  = AUX_BASE + 72,
-    AUX_MU_LCR_REG  = AUX_BASE + 76,
-    AUX_MU_MCR_REG  = AUX_BASE + 80,
-    AUX_MU_LSR_REG  = AUX_BASE + 84,
-    AUX_MU_MSR_REG  = AUX_BASE + 88,
-    AUX_MU_SCRATCH  = AUX_BASE + 92,
-    AUX_MU_CNTL_REG = AUX_BASE + 96,
-    AUX_MU_STAT_REG = AUX_BASE + 100,
-    AUX_MU_BAUD_REG = AUX_BASE + 104,
-    AUX_UART_CLOCK  = 500000000,
-    UART_MAX_QUEUE  = 16 * 1024
-};
+    UART0_BASE = 0x3F201000, //The base address for UART. for raspi2 & 3, 0x20201000 for raspi1
+    UART0_DR     = (UART0_BASE + 0x00),
+    UART0_RSRECR = (UART0_BASE + 0x04),
+    UART0_FR     = (UART0_BASE + 0x18),
+    UART0_ILPR   = (UART0_BASE + 0x20),
+    UART0_IBRD   = (UART0_BASE + 0x24),
+    UART0_FBRD   = (UART0_BASE + 0x28),
+    UART0_LCRH   = (UART0_BASE + 0x2C),
+    UART0_CR     = (UART0_BASE + 0x30),
+    UART0_IFLS   = (UART0_BASE + 0x34),
+    UART0_IMSC   = (UART0_BASE + 0x38),
+    UART0_RIS    = (UART0_BASE + 0x3C),
+    UART0_MIS    = (UART0_BASE + 0x40),
+    UART0_ICR    = (UART0_BASE + 0x44),
+    UART0_DMACR  = (UART0_BASE + 0x48),
+    UART0_ITCR   = (UART0_BASE + 0x80),
+    UART0_ITIP   = (UART0_BASE + 0x84),
+    UART0_ITOP   = (UART0_BASE + 0x88),
+    UART0_TDR    = (UART0_BASE + 0x8C),
+    };
 
 /**
  * Memory-Mapped I/O write, sets memory address to a value
@@ -47,15 +47,16 @@ unsigned int mmio_read(long reg){
  * @param baud: The baud rate of serial communication
  */
 void uart_init(int baud){
-    mmio_write(AUX_ENABLES, 1); //Activates UART1
-    mmio_write(AUX_MU_IER_REG, 0);
-    mmio_write(AUX_MU_CNTL_REG, 0);
-    mmio_write(AUX_MU_LCR_REG, 3); //8 bits
-    mmio_write(AUX_MU_MCR_REG, 0);
-    mmio_write(AUX_MU_IER_REG, 0);
-    mmio_write(AUX_MU_IIR_REG, 0xC6); //Disables interups
-    mmio_write(AUX_MU_BAUD_REG, (AUX_UART_CLOCK/(baud*8))-1);
-    mmio_write(AUX_MU_CNTL_REG, 3); //Activates RX/TX
+    mmio_write(UART0_CR, 0x00000000);
+    mmio_write(GPPUD, 0x00000000);
+    mmio_write(GPPUDCLK0, (1 << 14) | (1 << 15));
+    mmio_write(GPPUDCLK0, 0x00000000);
+    mmio_write(UART0_ICR, 0x7FF);
+    mmio_write(UART0_IBRD, 1);
+    mmio_write(UART0_FBRD, 40);
+    mmio_write(UART0_LCRH, (1 << 4) | (1 << 5) | (1 << 6));
+    mmio_write(UART0_IMSC, (1 << 1) | (1 << 4) | (1 << 5) | (1 << 6) |(1 << 7) | (1 << 8) | (1 << 9) | (1 << 10));
+    mmio_write(UART0_CR, (1 << 0) | (1 << 8) | (1 << 9));
 }
 
 /**
@@ -63,8 +64,8 @@ void uart_init(int baud){
  * @param ch: char to be written
  */
 void uart_writeByteBlocking(unsigned char ch) {
-    while (!(mmio_read(AUX_MU_LSR_REG) & 0x20)); //Waits until ready to send to UART
-    mmio_write(AUX_MU_IO_REG, (unsigned int)ch); //Writes
+    while (!(mmio_read(UART0_FR) & (1 << 4))); //Waits until ready to send to UART
+    mmio_write(UART0_DR, (unsigned int)ch); //Writes
 }
 
 /**
