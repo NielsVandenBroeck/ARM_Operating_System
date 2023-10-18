@@ -3,7 +3,9 @@
 void main()
 {
     uart_init(115200);
-
-    uart_print("Sup rakkers\r\n");
+    while(1){
+        char test = uart_readline();
+        uart_print(test);
+    }
     while(1);
 }

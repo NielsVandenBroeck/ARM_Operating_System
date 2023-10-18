@@ -64,8 +64,13 @@ void uart_init(int baud){
  * @param ch: char to be written
  */
 void uart_writeByteBlocking(unsigned char ch) {
-    while (!(mmio_read(UART0_FR) & (1 << 4))); //Waits until ready to send to UART
+    while(mmio_read(UART0_FR) & (1 << 5)); //Waits until ready to send to UART
     mmio_write(UART0_DR, (unsigned int)ch); //Writes
+}
+
+unsigned char uart_readByteBlocking(){
+    while (mmio_read(UART0_FR) & (1 << 4)); //Waits until ready to read from UART
+    return mmio_read(UART0_DR); //Reads char
 }
 
 /**
@@ -73,8 +78,14 @@ void uart_writeByteBlocking(unsigned char ch) {
  * @param outputString: String to be printed
  */
 void uart_print(char *outputString){
-    while (*outputString) {
-        if (*outputString == '\n') uart_writeByteBlocking('\r');
+    while(*outputString) {
+        if(*outputString == '\n'){
+            uart_writeByteBlocking('\r');
+        }
         uart_writeByteBlocking(*outputString++);
     }
+}
+
+char uart_readline(){
+    return uart_readByteBlocking();
 }
