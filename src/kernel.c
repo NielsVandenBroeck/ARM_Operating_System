@@ -1,6 +1,8 @@
+#include "uart.h"
+
 void main()
 {
-
-while(1){}
-
+    uart_init(115200);
+    uart_print("Sup rakkers");
+    while(1);
 }
