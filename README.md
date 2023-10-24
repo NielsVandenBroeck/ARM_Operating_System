@@ -5,6 +5,8 @@
 https://jsandler18.github.io/
 https://www.rpi4os.com/
 https://developer.arm.com/documentation/den0024/a/
+https://github.com/jserv/mini-arm-os/tree/master
+https://www.raspberrypi.org/app/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
  ```
 
 ## how to get started
