@@ -1,13 +1,17 @@
-#include "uart.h"
+#include "uart/uart.h"
+#include "basic/malloc.h"
 
 void main()
 {
+    char* temp;
     uart_init(115200);
+    asm ("");
+
     uart_print("Hello world\r\n");
     while(1){
-        char input = uart_readline();
-        char *pChar = &input;
-        uart_print(pChar);
+        temp = uart_readline();
+        uart_print(temp);
+        uart_print("\r\n");
+        free(temp);
     }
-    while(1);
 }

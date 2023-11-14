@@ -1,3 +1,5 @@
+#include "../basic/malloc.h"
+
 enum
 {
     GPIO_BASE = 0x3F200000, //The GPIO registers base address. for raspi2 & 3, 0x20200000 for raspi1
@@ -24,23 +26,6 @@ enum
     UART0_ITOP   = (UART0_BASE + 0x88),
     UART0_TDR    = (UART0_BASE + 0x8C),
     };
-
-/**
- * Memory-Mapped I/O write, sets memory address to a value
- * @param reg: memory address
- * @param val: value
- */
-void mmio_write(long reg, unsigned int val){
-    *(volatile unsigned int *)reg = val;
-}
-
-/**
- * Memory-Mapped I/O read, reads the value of a memory address
- * @param reg: memory address
- */
-unsigned int mmio_read(long reg){
-    return *(volatile unsigned int *)reg;
-}
 
 /**
  * Initializes UART by setting all the memory addresses to the correct values
@@ -86,6 +71,23 @@ void uart_print(char *outputString){
     }
 }
 
-char uart_readline(){
-    return uart_readByteBlocking();
+void uart_printc(char c){
+    if(c == '\n'){
+        uart_writeByteBlocking('\r');
+    }
+    uart_writeByteBlocking(c);
+}
+
+char* uart_readline(){
+    int defaultLenght = 10;
+    char* input = (char *) malloc(15);
+    for(int i = 0; i <= defaultLenght; i++){
+        input[i] = uart_readByteBlocking();
+        if(input[i] == '\r'){
+            break;
+        }
+        uart_printc(input[i]);
+    }
+    uart_print("\r\n");
+    return input;
 }
