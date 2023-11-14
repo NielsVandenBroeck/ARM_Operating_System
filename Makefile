@@ -14,8 +14,8 @@ boot.o: src/boot.S
 kernel8.img: boot.o $(OFILES)
 	$(GCCPATH)/aarch64-none-elf-ld -nostdlib boot.o $(OFILES) -T src/link.ld -o kernel8.elf
 	$(GCCPATH)/aarch64-none-elf-objcopy -O binary kernel8.elf build/kernel8.img
-	/bin/rm *.o
-	/bin/rm src/*.o
+	/bin/rm -r *.o
+	find . -type f -name '*.o' -delete
 	/bin/rm *.elf
 	
 clean:
