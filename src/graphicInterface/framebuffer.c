@@ -83,5 +83,6 @@ void fb_init()
 
 void drawPixel(int x, int y, unsigned char attr)
 {
-    *((unsigned int*)(fb)) = vgapal[5];
+    int offs = (y * pitch) + (x * 4);
+    *((unsigned int*)(fb + offs)) = vgapal[attr & 0x0f];
 }
