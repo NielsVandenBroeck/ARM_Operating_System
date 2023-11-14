@@ -6,14 +6,6 @@ unsigned char *fb;
 
 //possible colors
 unsigned int vgapal[] = {
-        0x000000,
-        0x0000AA,
-        0x00AA00,
-        0x00AAAA,
-        0xAA0000,
-        0xAA00AA,
-        0xAA5500,
-        0xAAAAAA,
         0x555555,
         0x5555FF,
         0x55FF55,
@@ -92,5 +84,5 @@ unsigned int getWidth(){
 void drawPixel(int x, int y, int color)
 {
     int offs = (y * pitch) + (x * 4);
-    *((unsigned int*)(fb + offs)) = vgapal[color%16];
+    *((unsigned int*)(fb + offs)) = vgapal[color%8];
 }

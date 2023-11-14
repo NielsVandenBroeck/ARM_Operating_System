@@ -12,11 +12,16 @@ void main()
     uart_print("Hello world\r\n");
 
     fb_init();
-    for(int i = 0; i <= getWidth(); i++){
-        for(int a = 0; a <= getHeight(); a++){
-            drawPixel(i*10,a,i);
+    int g = 0;
+    while(1){
+        for(int i = 0; i <= getWidth(); i++){
+            for(int a = 0; a <= getHeight(); a++){
+                drawPixel(i,a,i/20+g);
+            }
         }
+        g++;
     }
+
 
     while(1){
         temp = uart_readline();
