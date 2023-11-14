@@ -1,5 +1,7 @@
 #include "uart/uart.h"
 #include "basic/malloc.h"
+#include "graphicInterface/framebuffer.h"
+
 
 void main()
 {
@@ -8,6 +10,7 @@ void main()
     asm ("");
 
     uart_print("Hello world\r\n");
+    drawPixel(0,0,'a');
     while(1){
         temp = uart_readline();
         uart_print(temp);

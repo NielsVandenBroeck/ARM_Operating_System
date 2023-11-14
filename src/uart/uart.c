@@ -79,8 +79,8 @@ void uart_printc(char c){
 }
 
 char* uart_readline(){
-    int defaultLenght = 10;
-    char* input = (char *) malloc(15);
+    int defaultLenght = 20;
+    char* input = (char *) malloc(20);
     for(int i = 0; i <= defaultLenght; i++){
         input[i] = uart_readByteBlocking();
         if(input[i] == '\r'){

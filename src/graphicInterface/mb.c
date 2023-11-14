@@ -1,7 +1,7 @@
 volatile unsigned int __attribute__((aligned(16))) mbox[36];
 
 enum {
-    VIDEOCORE_MBOX = (PERIPHERAL_BASE + 0x0000B880),
+    VIDEOCORE_MBOX = (0xFE000000 + 0x0000B880),
     MBOX_READ      = (VIDEOCORE_MBOX + 0x0),
     MBOX_POLL      = (VIDEOCORE_MBOX + 0x10),
     MBOX_SENDER    = (VIDEOCORE_MBOX + 0x14),
