@@ -1,2 +1,7 @@
 void fb_init();
-void drawPixel(int x, int y, unsigned char attr);
+
+unsigned int getHeight();
+
+unsigned int getWidth();
+
+void drawPixel(int x, int y, int color);

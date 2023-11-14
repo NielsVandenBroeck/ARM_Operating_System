@@ -10,9 +10,11 @@ void main()
     asm ("");
 
     uart_print("Hello world\r\n");
-    for(int i = 0; i <= 120; i++){
-        for(int a = 0; a <= 120; a++){
-            drawPixel(i,a,'a');
+
+    fb_init();
+    for(int i = 0; i <= getWidth(); i++){
+        for(int a = 0; a <= getHeight(); a++){
+            drawPixel(i*10,a,i);
         }
     }
 

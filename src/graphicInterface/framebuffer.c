@@ -1,5 +1,5 @@
 #include "../basic/mem.h"
-#include "mb.h"
+#include "../basic/mb.h"
 
 unsigned int width, height, pitch, isrgb;
 unsigned char *fb;
@@ -81,8 +81,16 @@ void fb_init()
     }
 }
 
-void drawPixel(int x, int y, unsigned char attr)
+unsigned int getHeight(){
+    return height;
+}
+
+unsigned int getWidth(){
+    return width;
+}
+
+void drawPixel(int x, int y, int color)
 {
     int offs = (y * pitch) + (x * 4);
-    *((unsigned int*)(fb + offs)) = vgapal[attr & 0x0f];
+    *((unsigned int*)(fb + offs)) = vgapal[color%16];
 }
