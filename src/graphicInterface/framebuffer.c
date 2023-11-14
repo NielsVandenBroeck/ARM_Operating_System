@@ -1,11 +1,28 @@
 #include "../basic/mem.h"
 #include "../basic/mb.h"
+#include "Font.h"
 
 unsigned int width, height, pitch, isrgb;
 unsigned char *fb;
 
 //possible colors
+enum {
+    red = 0x00AA00,
+    green = 0x0000AA,
+    blue = 0xAA0000,
+    cyan = 0xAA5500
+};
+
+
 unsigned int vgapal[] = {
+        0x000000,
+        0x0000AA,
+        0x00AA00,
+        0x00AAAA,
+        0xAA0000,
+        0xAA00AA,
+        0xAA5500,
+        0xAAAAAA,
         0x555555,
         0x5555FF,
         0x55FF55,
@@ -84,5 +101,30 @@ unsigned int getWidth(){
 void drawPixel(int x, int y, int color)
 {
     int offs = (y * pitch) + (x * 4);
-    *((unsigned int*)(fb + offs)) = vgapal[color%8];
+    *((unsigned int*)(fb + offs)) = color;
+}
+
+void drawString(int x, int y, char *s, int color)
+{
+    while (*s) {
+        if (*s == '\r') {
+            x = 0;
+        } else if(*s == '\n') {
+            x = 0; y += 8;
+        } else {
+            unsigned char *glyph = (unsigned char *)&font + (*s < FONT_NUMGLYPHS ? *s : 0) * FONT_BPG;
+
+            for (int i=0;i<FONT_HEIGHT;i++) {
+                for (int j=0;j<FONT_WIDTH;j++) {
+                    unsigned char mask = 1 << j;
+                    int col = (*glyph & mask) ? color : 0x000000;
+
+                    drawPixel(x+j, y+i, col);
+                }
+                glyph += FONT_BPL;
+            }
+            x += FONT_WIDTH;
+        }
+        s++;
+    }
 }
