@@ -4,17 +4,8 @@
 #include "font.h"
 
 unsigned int width, height, pitch, isrgb;
-unsigned int sizeScale = 5;
+unsigned int sizeScale = 2;
 unsigned char *fb;
-/*
-//possible colors
-enum {
-    red = 0x00AA00,
-    green = 0x0000AA,
-    blue = 0xAA0000,
-    cyan = 0xAA5500
-};
-*/
 
 void fb_init()
 {
@@ -142,27 +133,27 @@ void setInterfaceScaling(unsigned int scalingValue){
 void drawString(int* x, int* y, char *s, int color){
     while (*s) {
         if (*s == '\r') {
-            (*x) = 0;
+            (*x) = 0; //On \r, go back to begin of screen
         } else if(*s == '\n') {
             (*x) = 0;
-            (*y) += 8;
+            (*y) += 8; //on \n, start on new line below
         } else {
             unsigned char *glyph = (unsigned char *)&font + (*s < FONT_NUMGLYPHS ? *s : 0) * FONT_BPG;
 
             for (int i=0;i<FONT_HEIGHT;i++) {
                 for (int j=0;j<FONT_WIDTH;j++){
                     if(*glyph & 1 << j){
-                        drawPixel((*x)+j, (*y)+i, color);
+                        drawPixel((*x)+j, (*y)+i, color); //1 value in bitmap, has to be colored
                     }
                     else {
                         //todo background/highlights?
-                        drawPixel((*x)+j, (*y)+i, 0x000000);
+                        drawPixel((*x)+j, (*y)+i, 0x000000); //0 value in bitmap, pixel set to background color
                     }
                 }
-                glyph += FONT_BPL;
+                glyph += FONT_BPL; //position for next row
             }
-            (*x) += FONT_WIDTH;
+            (*x) += FONT_WIDTH; //position for next character
         }
-        s++;
+        s++; //read next character in string
     }
 }

@@ -11,7 +11,7 @@ void drawString(int* x, int* y, char *s, int color);
 
 void setInterfaceScaling(unsigned int scalingValue);
 
-//possible colors
+//default colors
 enum {
     black = 0x000000,
     white = 0x000000,
