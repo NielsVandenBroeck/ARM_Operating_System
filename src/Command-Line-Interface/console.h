@@ -1,5 +1,13 @@
+enum{
+    XOFFSET = 5,
+    YOFFSET = 5,
+    LINEHEIGHT = 10
+};
+
 //Communication over serial port, used for testing.
 void console_init();
+
+void console_run();
 
 void console_print(char *outputString);
 

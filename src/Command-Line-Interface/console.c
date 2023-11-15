@@ -1,8 +1,9 @@
 #include "../graphicInterface/framebuffer.h"
 #include "../basic/error.h"
 #include "../basic/mem.h"
+#include "console.h"
 
-static int currentConsolePosition[]={0,0};//x,y
+static int currentConsolePosition[]={5,5};//x,y
 
 /**
  * Initializes UART by setting all the memory addresses to the correct values
@@ -11,6 +12,12 @@ static int currentConsolePosition[]={0,0};//x,y
 void console_init(){
     //Make the frame buffer ready to use
     fb_init();
+}
+
+void console_run(){
+    console_print("Ubutnu@RaspberryPi");
+    drawCursor(&currentConsolePosition[0], &currentConsolePosition[1], green);
+    console_print("\nUbutnu@RaspberryPi");
 }
 
 /**

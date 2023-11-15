@@ -1,7 +1,8 @@
 #include "../basic/mem.h"
 #include "../basic/mb.h"
 #include "../basic/error.h"
-#include "font.h"
+#include "Font.h"
+#include "../Command-Line-Interface/console.h"
 
 unsigned int width, height, pitch, isrgb;
 unsigned int sizeScale = 2;
@@ -109,7 +110,7 @@ void setInterfaceScaling(unsigned int scalingValue){
             int oldY = (y * oldScaleSize);
             int oldX = (x * oldScaleSize);
             int oldOffs = (oldY * pitch) + (oldX * 4);
-            int newoffs = (y * pitch) + (x * 4);
+            //int newoffs = (y * pitch) + (x * 4);
             drawPixel(x, y, *((unsigned int*)(fb + oldOffs)));
             //*((unsigned int*)(fb + newoffs)) = *((unsigned int*)(fb + oldOffs));
         }
@@ -130,13 +131,21 @@ void setInterfaceScaling(unsigned int scalingValue){
 
 }
 
+void drawCursor(int* x, int* y, int color){
+    for (int i=0;i<LINEHEIGHT;i++) {
+        for (int j=0;j<1;j++){
+            drawPixel((*x)+j, (*y)+i, color);
+        }
+    }
+}
+
 void drawString(int* x, int* y, char *s, int color){
     while (*s) {
         if (*s == '\r') {
-            (*x) = 0; //On \r, go back to begin of screen
+            (*x) = XOFFSET; //On \r, go back to begin of screen
         } else if(*s == '\n') {
-            (*x) = 0;
-            (*y) += 8; //on \n, start on new line below
+            (*x) = XOFFSET;
+            (*y) += LINEHEIGHT; //on \n, start on new line below
         } else {
             unsigned char *glyph = (unsigned char *)&font + (*s < FONT_NUMGLYPHS ? *s : 0) * FONT_BPG;
 
