@@ -1,4 +1,3 @@
-
 enum {
     FONT_WIDTH     = 8,
     FONT_HEIGHT    = 8,

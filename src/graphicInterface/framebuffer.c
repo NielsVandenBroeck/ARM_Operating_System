@@ -1,7 +1,7 @@
 #include "../basic/mem.h"
 #include "../basic/mb.h"
 #include "../basic/error.h"
-#include "Font.h"
+#include "font.h"
 
 unsigned int width, height, pitch, isrgb;
 unsigned int sizeScale = 5;
@@ -15,25 +15,6 @@ enum {
     cyan = 0xAA5500
 };
 */
-
-unsigned int vgapal[] = {
-        0x000000,
-        0x0000AA,
-        0x00AA00,
-        0x00AAAA,
-        0xAA0000,
-        0xAA00AA,
-        0xAA5500,
-        0xAAAAAA,
-        0x555555,
-        0x5555FF,
-        0x55FF55,
-        0x55FFFF,
-        0xFF5555,
-        0xFF55FF,
-        0xFFFF55,
-        0xFFFFFF
-};
 
 void fb_init()
 {
@@ -158,8 +139,7 @@ void setInterfaceScaling(unsigned int scalingValue){
 
 }
 
-void drawString(int* x, int* y, char *s, int color)
-{
+void drawString(int* x, int* y, char *s, int color){
     while (*s) {
         if (*s == '\r') {
             (*x) = 0;
@@ -170,11 +150,14 @@ void drawString(int* x, int* y, char *s, int color)
             unsigned char *glyph = (unsigned char *)&font + (*s < FONT_NUMGLYPHS ? *s : 0) * FONT_BPG;
 
             for (int i=0;i<FONT_HEIGHT;i++) {
-                for (int j=0;j<FONT_WIDTH;j++) {
-                    unsigned char mask = 1 << j;
-                    int col = (*glyph & mask) ? color : 0x000000;
-
-                    drawPixel((*x)+j, (*y)+i, col);
+                for (int j=0;j<FONT_WIDTH;j++){
+                    if(*glyph & 1 << j){
+                        drawPixel((*x)+j, (*y)+i, color);
+                    }
+                    else {
+                        //todo background/highlights?
+                        drawPixel((*x)+j, (*y)+i, 0x000000);
+                    }
                 }
                 glyph += FONT_BPL;
             }
