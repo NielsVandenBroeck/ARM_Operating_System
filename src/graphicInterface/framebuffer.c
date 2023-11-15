@@ -1,10 +1,12 @@
 #include "../basic/mem.h"
 #include "../basic/mb.h"
+#include "../basic/error.h"
 #include "Font.h"
 
 unsigned int width, height, pitch, isrgb;
+unsigned int sizeScale = 5;
 unsigned char *fb;
-
+/*
 //possible colors
 enum {
     red = 0x00AA00,
@@ -12,7 +14,7 @@ enum {
     blue = 0xAA0000,
     cyan = 0xAA5500
 };
-
+*/
 
 unsigned int vgapal[] = {
         0x000000,
@@ -100,17 +102,70 @@ unsigned int getWidth(){
 
 void drawPixel(int x, int y, int color)
 {
-    int offs = (y * pitch) + (x * 4);
-    *((unsigned int*)(fb + offs)) = color;
+    for(int scalex = 0; scalex < sizeScale; scalex++){
+        for(int scaley = 0; scaley < sizeScale; scaley++){
+            int newY = (y * sizeScale) + scaley;
+            int newX = (x * sizeScale) + scalex;
+            int offs = (newY * pitch) + (newX * 4);
+            *((unsigned int*)(fb + offs)) = color;
+        }
+    }
 }
 
-void drawString(int x, int y, char *s, int color)
+//upscaling does not work only down scaling because we take te previus pixel
+//try working from R bottom when upscaling!
+void setInterfaceScaling(unsigned int scalingValue){
+
+    if(scalingValue <= 0){
+        throw("Cannot define a scaling value smaller of the same as 0");
+    }
+
+    int scaleChange = sizeScale - scalingValue;
+
+    if(scaleChange < 0){
+        scaleChange = -scaleChange;
+    }
+
+    int changeSizeX =  width/sizeScale;
+    int changeSizeY =  height/sizeScale;
+
+    int oldScaleSize = sizeScale;
+    sizeScale = scalingValue;
+
+    for(int y = 0; y <= changeSizeY; y++){
+        for(int x = 0; x <= changeSizeX; x++){
+            int oldY = (y * oldScaleSize);
+            int oldX = (x * oldScaleSize);
+            int oldOffs = (oldY * pitch) + (oldX * 4);
+            int newoffs = (y * pitch) + (x * 4);
+            drawPixel(x, y, *((unsigned int*)(fb + oldOffs)));
+            //*((unsigned int*)(fb + newoffs)) = *((unsigned int*)(fb + oldOffs));
+        }
+    }
+
+    for(int y = 0; y < height; y++){
+        for(int x = changeSizeX; x < width; x++){
+            int newoffs = (y * pitch) + (x * 4);
+            *((unsigned int*)(fb + newoffs)) = 0x000000;
+        }
+    }
+    for(int y = changeSizeY; y < height; y++){
+        for(int x = 0; x < width; x++){
+            int newoffs = (y * pitch) + (x * 4);
+            *((unsigned int*)(fb + newoffs)) = 0x000000;
+        }
+    }
+
+}
+
+void drawString(int* x, int* y, char *s, int color)
 {
     while (*s) {
         if (*s == '\r') {
-            x = 0;
+            (*x) = 0;
         } else if(*s == '\n') {
-            x = 0; y += 8;
+            (*x) = 0;
+            (*y) += 8;
         } else {
             unsigned char *glyph = (unsigned char *)&font + (*s < FONT_NUMGLYPHS ? *s : 0) * FONT_BPG;
 
@@ -119,11 +174,11 @@ void drawString(int x, int y, char *s, int color)
                     unsigned char mask = 1 << j;
                     int col = (*glyph & mask) ? color : 0x000000;
 
-                    drawPixel(x+j, y+i, col);
+                    drawPixel((*x)+j, (*y)+i, col);
                 }
                 glyph += FONT_BPL;
             }
-            x += FONT_WIDTH;
+            (*x) += FONT_WIDTH;
         }
         s++;
     }
