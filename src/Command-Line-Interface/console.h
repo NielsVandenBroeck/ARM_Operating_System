@@ -13,7 +13,7 @@ void console_print(char *outputString);
 
 void console_println(char *outputString);
 
-void console_print_int(int number);
+void console_print_int(unsigned int number);
 
 void console_printc(char c);
 

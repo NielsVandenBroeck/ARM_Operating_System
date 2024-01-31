@@ -85,6 +85,21 @@ void drawPixel(int x, int y, int color)
     }
 }
 
+void colorTest(){
+    int x = 0;
+    for(int r = 0; r < 256; r += 4){
+        for(int g = 0; g < 256; g += 4){
+            for(int b = 0; b < 256; b += 4){
+                float newColor = ((b & 0xff) << 16) + ((g & 0xff) << 8) + ((r & 0xff));
+                for(int i = 0; i < 5; i++){
+                    drawPixel(x, i, newColor);
+                }
+                x++;
+            }
+        }
+    }
+}
+
 //upscaling does not work only down scaling because we take te previus pixel
 //try working from R bottom when upscaling!
 void setInterfaceScaling(unsigned int scalingValue){

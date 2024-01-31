@@ -34,8 +34,8 @@ void console_println(char *outputString){
     console_print("\r\n");
 }
 
-void console_print_int(int number){
-    int tempNumber = number;
+void console_print_int(unsigned int number){
+    unsigned int tempNumber = number;
     int devider = 1;
     while(tempNumber > 9){
         tempNumber = (int)(tempNumber / 10);
@@ -43,7 +43,7 @@ void console_print_int(int number){
     }
 
     while(devider >= 1){
-        int digitNumber = (int)(number / devider);
+        unsigned int digitNumber = (unsigned int)(number / devider);
         char asChar = digitNumber + '0';
         console_printc(asChar);
         number -= digitNumber * devider;
