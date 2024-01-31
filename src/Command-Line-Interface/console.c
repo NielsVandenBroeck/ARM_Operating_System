@@ -4,6 +4,7 @@
 #include "console.h"
 
 static int currentConsolePosition[]={5,5};//x,y
+static int CURRENT_COLOR = green;
 
 /**
  * Initializes UART by setting all the memory addresses to the correct values
@@ -16,7 +17,7 @@ void console_init(){
 
 void console_run(){
     console_print("Ubutnu@RaspberryPi");
-    drawCursor(&currentConsolePosition[0], &currentConsolePosition[1], green);
+    drawCursor(&currentConsolePosition[0], &currentConsolePosition[1], CURRENT_COLOR);
     console_print("\nUbutnu@RaspberryPi");
 }
 
@@ -25,7 +26,7 @@ void console_run(){
  * @param outputString: String to be printed
  */
 void console_print(char *outputString){
-    drawString(&currentConsolePosition[0], &currentConsolePosition[1], outputString, green);
+    drawString(&currentConsolePosition[0], &currentConsolePosition[1], outputString, CURRENT_COLOR);
 }
 
 void console_println(char *outputString){
@@ -34,15 +35,19 @@ void console_println(char *outputString){
 }
 
 void console_printc(char c){
-    /*
+
     if(c == '\n'){
         uart_writeByteBlocking('\r');
     }
-    uart_writeByteBlocking(c);*/
+    console_print(&c);
 }
 
 char* console_readline(){
     //TODO
     throw("console_readline function not implemented yet");
     return "";
+}
+
+void console_color(int newColor){
+    CURRENT_COLOR = newColor;
 }

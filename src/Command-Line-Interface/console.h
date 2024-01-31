@@ -16,3 +16,5 @@ void console_println(char *outputString);
 void console_printc(char c);
 
 char* console_readline();
+
+void console_color(int newColor);

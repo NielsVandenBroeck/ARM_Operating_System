@@ -5,7 +5,7 @@
 #include "../Command-Line-Interface/console.h"
 
 unsigned int width, height, pitch, isrgb;
-unsigned int sizeScale = 2;
+unsigned int sizeScale = 1;
 unsigned char *fb;
 
 void fb_init()

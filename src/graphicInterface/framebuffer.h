@@ -17,7 +17,7 @@ void setInterfaceScaling(unsigned int scalingValue);
 enum {
     black = 0x000000,
     white = 0x000000,
-    red = 0xAA0000,
-    green = 0x00AA00,
-    blue = 0x0000AA
+    red = 0x0000FF,
+    green = 0x00FF00,
+    blue = 0xFF0000
 };
