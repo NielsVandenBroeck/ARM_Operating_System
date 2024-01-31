@@ -34,12 +34,31 @@ void console_println(char *outputString){
     console_print("\r\n");
 }
 
-void console_printc(char c){
+void console_print_int(int number){
+    int tempNumber = number;
+    int devider = 1;
+    while(tempNumber > 9){
+        tempNumber = (int)(tempNumber / 10);
+        devider *= 10;
+    }
 
+    while(devider >= 1){
+        int digitNumber = (int)(number / devider);
+        char asChar = digitNumber + '0';
+        console_printc(asChar);
+        number -= digitNumber * devider;
+        devider = (int)(devider / 10);
+    }
+    console_print("\r\n");
+}
+
+void console_printc(char c){
     if(c == '\n'){
         uart_writeByteBlocking('\r');
     }
-    console_print(&c);
+    char* charString = (char*)malloc(1 * sizeof(char));
+    charString[0] = c;
+    console_print(charString);
 }
 
 char* console_readline(){
