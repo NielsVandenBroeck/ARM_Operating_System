@@ -1,7 +1,6 @@
 #include "../basic/mem.h"
 #include "../basic/mb.h"
 #include "../basic/error.h"
-#include "Font.h"
 #include "../Command-Line-Interface/console.h"
 
 unsigned int width, height, pitch, isrgb;
@@ -86,8 +85,8 @@ void drawPixel(int x, int y, int color)
 }
 
 void drawScreen(int color){
-    for(int x = 0; x < getWidth(); x++){
-        for(int y = 0; y < getHeight(); y++){
+    for(int x = 0; x < getHeight(); x++){
+        for(int y = 0; y < getWidth(); y++){
             drawPixel(x,y,color);
         }
     }
@@ -152,40 +151,4 @@ void setInterfaceScaling(unsigned int scalingValue){
         }
     }
 
-}
-
-void drawCursor(int* x, int* y, int color){
-    for (int i=0;i<LINEHEIGHT;i++) {
-        for (int j=0;j<1;j++){
-            drawPixel((*x)+j, (*y)+i, color);
-        }
-    }
-}
-
-void drawString(int* x, int* y, char *s, int color){
-    while (*s) {
-        if (*s == '\r') {
-            (*x) = XOFFSET; //On \r, go back to begin of screen
-        } else if(*s == '\n') {
-            (*x) = XOFFSET;
-            (*y) += LINEHEIGHT; //on \n, start on new line below
-        } else {
-            unsigned char *glyph = (unsigned char *)&font + (*s < FONT_NUMGLYPHS ? *s : 0) * FONT_BPG;
-
-            for (int i=0;i<FONT_HEIGHT;i++) {
-                for (int j=0;j<FONT_WIDTH;j++){
-                    if(*glyph & 1 << j){
-                        drawPixel((*x)+j, (*y)+i, color); //1 value in bitmap, has to be colored
-                    }
-                    else {
-                        //todo background/highlights?
-                        drawPixel((*x)+j, (*y)+i, 0x000000); //0 value in bitmap, pixel set to background color
-                    }
-                }
-                glyph += FONT_BPL; //position for next row
-            }
-            (*x) += FONT_WIDTH; //position for next character
-        }
-        s++; //read next character in string
-    }
 }

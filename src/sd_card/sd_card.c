@@ -4,7 +4,7 @@
 #include "../Command-Line-Interface/console.h"
 
 void wait(){
-    console_println("start wait");
+    console_printline("start wait");
     int a = 0;
     for(int i = 0; i < 2000000000; i++){
         a++;
@@ -14,7 +14,7 @@ void wait(){
         a++;
 
     }
-    console_println("end wait");
+    console_printline("end wait");
 }
 
 //https://forums.raspberrypi.com/viewtopic.php?p=166470#p166470
@@ -30,7 +30,7 @@ void sd_init() {
         m = mmio_read(CONTROL1_address);
         test = m & 0x10000000;
     } while (test != 0);  //Waiting it to reset
-    console_println("ok");
+    console_printline("ok");
 
     mmio_write(CONTROL0_address, 0x00100000);
     mmio_write(CONTROL1_address, 0x000F0F27);
@@ -44,7 +44,7 @@ void sd_init() {
         test = m & 0x00000002;
     } while (test != 2); //Waiting for clock to be stable
   */
-    console_println("ok");
+    console_printline("ok");
 
 
     //GO_IDLE_STATE
@@ -68,7 +68,7 @@ void sd_init() {
 /*
     do {
         //SD_SEND_OP_COND (repeat until Powerup bit is set)
-        //console_println("IH2:");
+        //console_printline("IH2:");
         mmio_write(ARG1_address, 0x40FF0000);
         mmio_write(CMDTM_address, 0x29020000);
         wait();
@@ -79,7 +79,7 @@ void sd_init() {
 
     } while (check == 0);
 
-    console_println("ok!!!");
+    console_printline("ok!!!");
     //ALL_SEND_CID
     mmio_write(ARG1_address, 0x00000000);
     mmio_write(CMDTM_address, 0x02020000);*/

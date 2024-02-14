@@ -8,11 +8,6 @@ void drawScreen(int color);
 
 void drawPixel(int x, int y, int color);
 
-//x and y will be set to the new current position
-void drawString(int* x, int* y, char *s, int color);
-
-void drawCursor(int*x, int* y, int color);
-
 void setInterfaceScaling(unsigned int scalingValue);
 
 void colorTest();
@@ -20,7 +15,7 @@ void colorTest();
 //default colors
 enum {
     black = 0x000000,
-    white = 0x000000,
+    white = 0xFFFFFF,
     red = 0x0000FF,
     green = 0x00FF00,
     blue = 0xFF0000

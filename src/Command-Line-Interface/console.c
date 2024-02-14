@@ -2,6 +2,7 @@
 #include "../basic/error.h"
 #include "../basic/mem.h"
 #include "console.h"
+#include "../Command-Line-Interface/Font.h"
 
 static int currentConsolePosition[]={10,10};//x,y
 static int CURRENT_COLOR = green;
@@ -18,6 +19,7 @@ void console_init(){
 void console_run(){
     console_print("Ubutnu@user");
     drawCursor(&currentConsolePosition[0], &currentConsolePosition[1], CURRENT_COLOR);
+    //todo wait for input
 }
 
 /**
@@ -28,9 +30,9 @@ void console_print(char *outputString){
     drawString(&currentConsolePosition[0], &currentConsolePosition[1], outputString, CURRENT_COLOR);
 }
 
-void console_println(char *outputString){
+void console_printline(char *outputString){
     console_print(outputString);
-    console_print("\r\n");
+    console_nextline();
 }
 
 void console_print_int(unsigned int number){
@@ -61,6 +63,10 @@ void console_printc(char c){
     free(charString);
 }
 
+void console_nextline(){
+    console_print("\r\n");
+}
+
 char* console_readline(){
     //TODO
     throw("console_readline function not implemented yet");
@@ -75,4 +81,41 @@ void console_clear(){
 
 void console_color(int newColor){
     CURRENT_COLOR = newColor;
+}
+
+void drawCursor(int* x, int* y, int color){
+    for (int i=0;i<LINEHEIGHT;i++) {
+        for (int j=0;j<1;j++){
+            drawPixel((*x)+j, (*y)+i, color);
+        }
+    }
+    (*x) += FONT_WIDTH;
+}
+
+void drawString(int* x, int* y, char *s, int color){
+    while (*s) {
+        if (*s == '\r') {
+            (*x) = XOFFSET; //On \r, go back to begin of screen
+        } else if(*s == '\n') {
+            (*x) = XOFFSET;
+            (*y) += LINEHEIGHT; //on \n, start on new line below
+        } else {
+            unsigned char *glyph = (unsigned char *)&font + (*s < FONT_NUMGLYPHS ? *s : 0) * FONT_BPG;
+
+            for (int i=0;i<FONT_HEIGHT;i++) {
+                for (int j=0;j<FONT_WIDTH;j++){
+                    if(*glyph & 1 << j){
+                        drawPixel((*x)+j, (*y)+i, color); //1 value in bitmap, has to be colored
+                    }
+                    else {
+                        //todo background/highlights?
+                        drawPixel((*x)+j, (*y)+i, 0x000000); //0 value in bitmap, pixel set to background color
+                    }
+                }
+                glyph += FONT_BPL; //position for next row
+            }
+            (*x) += FONT_WIDTH; //position for next character
+        }
+        s++; //read next character in string
+    }
 }

@@ -12,14 +12,14 @@ void main()
    // uart_print("Hello world\r\n");
 
     console_init();
-    console_println("Starting Ubutnu...");
+    console_printline("Starting Ubutnu...");
     //todo loading OS
     console_clear();
     console_run();
 
     while(1){
         char* input = uart_readline();
-        console_println(input);
+        console_printline(input);
         //setInterfaceScaling(5);
         free(input);
     }
@@ -27,10 +27,10 @@ void main()
 
 
     setInterfaceScaling(2);
-    //console_println("Hello world yeet");
+    //console_printline("Hello world yeet");
     while(1){
         char* temp = uart_readline();
-        console_println(temp);
+        console_printline(temp);
 
         //setInterfaceScaling(1);
         //uart_print("\r\n");
