@@ -5,7 +5,7 @@
 #include "../Command-Line-Interface/console.h"
 
 unsigned int width, height, pitch, isrgb;
-unsigned int sizeScale = 1;
+unsigned int sizeScale = 2;
 unsigned char *fb;
 
 void fb_init()
@@ -81,6 +81,14 @@ void drawPixel(int x, int y, int color)
             int newX = (x * sizeScale) + scalex;
             int offs = (newY * pitch) + (newX * 4);
             *((unsigned int*)(fb + offs)) = color;
+        }
+    }
+}
+
+void drawScreen(int color){
+    for(int x = 0; x < getWidth(); x++){
+        for(int y = 0; y < getHeight(); y++){
+            drawPixel(x,y,color);
         }
     }
 }

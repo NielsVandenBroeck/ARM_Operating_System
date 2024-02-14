@@ -1,7 +1,7 @@
 enum{
-    XOFFSET = 5,
-    YOFFSET = 5,
-    LINEHEIGHT = 10
+    XOFFSET = 10,
+    YOFFSET = 10,
+    LINEHEIGHT = 20
 };
 
 //Communication over serial port, used for testing.
@@ -18,5 +18,7 @@ void console_print_int(unsigned int number);
 void console_printc(char c);
 
 char* console_readline();
+
+void console_clear();
 
 void console_color(int newColor);

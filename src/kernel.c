@@ -8,26 +8,15 @@
 void main()
 {
    // uart_init(115200);
-    asm ("");
-
+   asm ("");
    // uart_print("Hello world\r\n");
 
     console_init();
+    console_println("Starting Ubutnu...");
+    //todo loading OS
+    console_clear();
+    console_run();
 
-    console_print_int(1);
-    console_print_int(2);
-    console_print_int(3);
-    console_print_int(4);
-    console_print_int(5);
-    console_print_int(6);
-    console_print_int(7);
-    console_print_int(8);
-    console_print_int(9);
-    console_print_int(251468515);
-
-    //sd_card_init();
-
-    console_println("done 1");
     while(1){
         char* input = uart_readline();
         console_println(input);
@@ -35,5 +24,34 @@ void main()
         free(input);
     }
 
-    console_run();
+
+
+    setInterfaceScaling(2);
+    //console_println("Hello world yeet");
+    while(1){
+        char* temp = uart_readline();
+        console_println(temp);
+
+        //setInterfaceScaling(1);
+        //uart_print("\r\n");
+        free(temp);
+    }
+
+    int g = 0;
+    while(1){
+        for(int i = 0; i <= getWidth(); i++){
+            for(int a = 0; a <= getHeight(); a++){
+                if(g % 3 == 0){
+                    drawPixel(a,i,green);
+                }
+                else if(g % 3 == 1){
+                    drawPixel(a,i,red);
+                }
+                else if(g % 3 == 2){
+                    drawPixel(a,i,blue);
+                }
+            }
+        }
+        g++;
+    }
 }

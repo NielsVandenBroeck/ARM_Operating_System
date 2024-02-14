@@ -3,7 +3,7 @@
 #include "../basic/mem.h"
 #include "console.h"
 
-static int currentConsolePosition[]={5,5};//x,y
+static int currentConsolePosition[]={10,10};//x,y
 static int CURRENT_COLOR = green;
 
 /**
@@ -16,9 +16,8 @@ void console_init(){
 }
 
 void console_run(){
-    console_print("Ubutnu@RaspberryPi");
+    console_print("Ubutnu@user");
     drawCursor(&currentConsolePosition[0], &currentConsolePosition[1], CURRENT_COLOR);
-    console_print("\nUbutnu@RaspberryPi");
 }
 
 /**
@@ -59,12 +58,19 @@ void console_printc(char c){
     char* charString = (char*)malloc(1 * sizeof(char));
     charString[0] = c;
     console_print(charString);
+    free(charString);
 }
 
 char* console_readline(){
     //TODO
     throw("console_readline function not implemented yet");
     return "";
+}
+
+void console_clear(){
+    drawScreen(black);
+    currentConsolePosition[0] = 10;
+    currentConsolePosition[1] = 10;
 }
 
 void console_color(int newColor){
