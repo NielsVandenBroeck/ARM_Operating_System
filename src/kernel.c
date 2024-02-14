@@ -4,8 +4,6 @@
 #include "Command-Line-Interface/console.h"
 #include "basic/error.h"
 #include "sd_card/sd_card.h"
-#include "basic/interrupt.h"
-#include "basic/timer.h"
 
 void main()
 {
@@ -13,21 +11,13 @@ void main()
    asm ("");
    // uart_print("Hello world\r\n");
 
-   console_init();
+    console_init();
+    console_printline("Starting Ubutnu...");
+    //todo loading OS
+    console_clear();
+    console_run();
+    console_printline("Starting Ubutnu...");
 
-   interrupts_init();
-   timer_init();
-   console_printline("hklmsqdjfhmqdsjhfkmqdf");
-   timer_set(5000000); // 1 second
-
-   console_printline("Hello, kernel World!");
-
-
-
-//    console_printline("Starting Ubutnu...");
-//    //todo loading OS
-//    console_clear();
-//    -console_run();
 
     while(1){
         char* input = uart_readline();
