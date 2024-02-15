@@ -20,10 +20,8 @@ void main()
 
 
     while(1){
-        char* input = uart_readline();
-        console_printline(input);
-        //setInterfaceScaling(5);
-        free(input);
+        wait_msec(1000);
+        console_printline("1 sec passed");
     }
 
 

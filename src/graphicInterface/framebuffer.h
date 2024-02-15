@@ -10,6 +10,8 @@ void drawPixel(int x, int y, int color);
 
 void setInterfaceScaling(unsigned int scalingValue);
 
+void wait_msec(unsigned int n);
+
 void colorTest();
 
 //default colors
