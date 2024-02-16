@@ -4,7 +4,7 @@
 #include "../Command-Line-Interface/console.h"
 
 void wait(){
-    printText("start wait");
+    printText("start wait", 0x00FF00);
     int a = 0;
     for(int i = 0; i < 2000000000; i++){
         a++;
@@ -14,7 +14,7 @@ void wait(){
         a++;
 
     }
-    printText("end wait");
+    printText("end wait", 0x00FF00);
 }
 
 //https://forums.raspberrypi.com/viewtopic.php?p=166470#p166470
@@ -25,26 +25,26 @@ void sd_init() {
     mmio_write(CONTROL1_address, 0x070F0F27);
     mmio_write(CONTROL2_address, 0x00000000);
 
-    printText("Waiting it to reset: ");
+    printText("Waiting it to reset: ", 0x00FF00);
     do {
         m = mmio_read(CONTROL1_address);
         test = m & 0x10000000;
     } while (test != 0);  //Waiting it to reset
-    printText("ok");
+    printText("ok", 0x00FF00);
 
     mmio_write(CONTROL0_address, 0x00100000);
     mmio_write(CONTROL1_address, 0x000F0F27);
     mmio_write(CONTROL2_address, 0x00000000);
     mmio_write(IRPT_MASK_address, 0xFFFFFFFF);
 
-    printText("Clock stable: ");
+    printText("Clock stable: ", 0x00FF00);
 /*
     do {
         m = mmio_read(CONTROL1_address);
         test = m & 0x00000002;
     } while (test != 2); //Waiting for clock to be stable
   */
-    printText("ok");
+printText("ok", 0x00FF00);
 
 
     //GO_IDLE_STATE

@@ -7,24 +7,15 @@
 static int currentConsolePosition[]={10,10};//x,y
 static int CURRENT_COLOR = green;
 
-
 void initConsole(){
     //Make the frame buffer ready to use
     fb_init();
 }
 
 void runConsole(){
-    printText("Ubutnu@user");
-    nextLine();
+    printText("Ubutnu@user$ ", green);
     //todo wait for input
-    int x = 1;
-    while(1){
-        wait_msec(100);
-        printText("test line: ");
-        printInt(x);
-        nextLine();
-        x++;
-    }
+    //runCursor();
 }
 
 void nextLine(){
@@ -48,14 +39,14 @@ void setColor(int newColor){
     CURRENT_COLOR = newColor;
 }
 
-void printText(char *s){
+void printText(char *s, int color){
     while (*s) {
-        printChar(*s);
+        printChar(*s, color);
         s++; //read next character in string
     }
 }
 
-void printChar(char c){
+void printChar(char c, int color){
     if (c == '\r') {
         currentConsolePosition[0] = XOFFSET; //On \r, go back to begin of screen
     } else if(c == '\n') {
@@ -67,11 +58,11 @@ void printChar(char c){
         for (int i=0;i<FONT_HEIGHT;i++) {
             for (int j=0;j<FONT_WIDTH;j++){
                 if(*glyph & 1 << j){
-                    drawPixel(currentConsolePosition[0]+j, currentConsolePosition[1]+i, CURRENT_COLOR); //1 value in bitmap, has to be colored
+                    drawPixel(currentConsolePosition[0]+j, currentConsolePosition[1]+i, color); //1 value in bitmap, has to be colored
                 }
                 else {
                     //todo background/highlights?
-                    drawPixel(currentConsolePosition[0]+j, currentConsolePosition[1]+i, 0x000000); //0 value in bitmap, pixel set to background color
+                    //drawPixel(currentConsolePosition[0]+j, currentConsolePosition[1]+i, 0x000000); //0 value in bitmap, pixel set to background color
                 }
             }
             glyph += FONT_BPL; //position for next row
@@ -80,7 +71,7 @@ void printChar(char c){
     }
 }
 
-void printInt(unsigned int number){
+void printInt(unsigned int number, int color){
     unsigned int tempNumber = number;
     int devider = 1;
     while(tempNumber > 9){
@@ -91,17 +82,30 @@ void printInt(unsigned int number){
     while(devider >= 1){
         unsigned int digitNumber = (unsigned int)(number / devider);
         char asChar = digitNumber + '0';
-        printChar(asChar);
+        printChar(asChar, color);
         number -= digitNumber * devider;
         devider = (int)(devider / 10);
     }
 }
 
-void drawCursor(){
-    for (int i=0;i<LINEHEIGHT;i++) {
-        for (int j=0;j<1;j++){
-            drawPixel(currentConsolePosition[0]+j, currentConsolePosition[1]+i, CURRENT_COLOR);
-        }
+void runCursor(){
+    while(1){
+        drawCursor();
+        wait_msec(500);
+        clearCursor();
+        wait_msec(500);
     }
-    currentConsolePosition[0] += FONT_WIDTH;
+    //todo with thread and break when action
+}
+
+void drawCursor(){
+    for (int i=-2;i<LINEHEIGHT;i++) {
+        drawPixel(currentConsolePosition[0]-1, currentConsolePosition[1]+i, CURRENT_COLOR);
+    }
+}
+
+void clearCursor(){
+    for (int i=-2;i<LINEHEIGHT;i++) {
+        drawPixel(currentConsolePosition[0]-1, currentConsolePosition[1]+i, black);
+    }
 }

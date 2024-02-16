@@ -14,8 +14,8 @@ void core3_main(void)
 
     while (1) {
         wait_msec(3000);
-        printText("core3:");
-        printInt(core3_val);
+        printText("core3:", green);
+        printInt(core3_val, green);
         if (core3_val < 100) core3_val++;
     }
 }
@@ -28,8 +28,8 @@ void core2_main(void)
 
     while (1) {
         wait_msec(2000);
-        printText("core2:");
-        printInt(core2_val);
+        printText("core2:", green);
+        printInt(core2_val, green);
         if (core2_val < 100) core2_val++;
     }
 }
@@ -42,8 +42,8 @@ void core1_main(void)
 
     while (1) {
         wait_msec(1000);
-        printText("core1:");
-        printInt(core1_val);
+        printText("core1:", green);
+        printInt(core1_val, green);
         if (core1_val < 100) core1_val++;
     }
 }
@@ -54,8 +54,8 @@ void core0_main(void)
 
     while (1) {
         wait_msec(1000);
-        printText("core0:");
-        printInt(core0_val);
+        printText("core0:", green);
+        printInt(core0_val, green);
         if (core0_val < 100) core0_val++;
     }
 }

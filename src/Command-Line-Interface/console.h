@@ -17,10 +17,14 @@ void clearConsole();
 
 void setColor(int newColor);
 
-void printText(char *outputString);
+void printText(char *outputString, int color);
 
-void printChar(char c);
+void printChar(char c, int color);
 
-void printInt(unsigned int number);
+void printInt(unsigned int number, int color);
+
+void runCursor();
 
 void drawCursor();
+
+void clearCursor();
