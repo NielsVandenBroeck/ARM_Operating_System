@@ -62,9 +62,10 @@ void core0_main(void)
 
 void main()
 {
-    //start_core3(core3_main);      // Kick it off on core 3
-    //core0_main();                 // Loop endlessly
-
     initConsole();
+    start_core3(core3_main);      // Kick it off on core 3
+    core0_main();                 // Loop endlessly
+
+
     runConsole();
 }

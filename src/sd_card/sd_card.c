@@ -5,15 +5,6 @@
 
 void wait(){
     printText("start wait", 0x00FF00);
-    int a = 0;
-    for(int i = 0; i < 2000000000; i++){
-        a++;
-        a++;
-        a++;a++;
-        a++;
-        a++;
-
-    }
     printText("end wait", 0x00FF00);
 }
 
