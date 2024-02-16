@@ -5,27 +5,22 @@ enum{
 };
 
 //Communication over serial port, used for testing.
-void console_init();
+void initConsole();
 
-void console_run();
+void runConsole();
 
-void console_print(char *outputString);
+void nextLine();
 
-void console_printline(char *outputString);
+char* readLine();
 
-void console_print_int(unsigned int number);
+void clearConsole();
 
-void console_printc(char c);
+void setColor(int newColor);
 
-void console_nextline();
+void printText(char *outputString);
 
-char* console_readline();
+void printChar(char c);
 
-void console_clear();
+void printInt(unsigned int number);
 
-void console_color(int newColor);
-
-//x and y will be set to the new current position
-void drawString(int* x, int* y, char *s, int color);
-
-void drawCursor(int*x, int* y, int color);
+void drawCursor();

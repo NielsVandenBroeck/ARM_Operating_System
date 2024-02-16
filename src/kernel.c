@@ -1,57 +1,70 @@
 #include "uart/uart.h"
-#include "basic/malloc.h"
 #include "graphicInterface/framebuffer.h"
 #include "Command-Line-Interface/console.h"
 #include "basic/error.h"
 #include "sd_card/sd_card.h"
 
+#include "basic/multicore.h"
+
+void core3_main(void)
+{
+    unsigned int core3_val = 0;
+
+    clear_core3();                // Only run once
+
+    while (1) {
+        wait_msec(3000);
+        printText("core3:");
+        printInt(core3_val);
+        if (core3_val < 100) core3_val++;
+    }
+}
+
+void core2_main(void)
+{
+    unsigned int core2_val = 0;
+
+    clear_core2();                // Only run once
+
+    while (1) {
+        wait_msec(2000);
+        printText("core2:");
+        printInt(core2_val);
+        if (core2_val < 100) core2_val++;
+    }
+}
+
+void core1_main(void)
+{
+    unsigned int core1_val = 0;
+
+    clear_core1();                // Only run once
+
+    while (1) {
+        wait_msec(1000);
+        printText("core1:");
+        printInt(core1_val);
+        if (core1_val < 100) core1_val++;
+    }
+}
+
+void core0_main(void)
+{
+    unsigned int core0_val = 0;
+
+    while (1) {
+        wait_msec(1000);
+        printText("core0:");
+        printInt(core0_val);
+        if (core0_val < 100) core0_val++;
+    }
+}
+
 void main()
 {
-   // uart_init(115200);
-   asm ("");
-   // uart_print("Hello world\r\n");
+    //start_core3(core3_main);      // Kick it off on core 3
+    //core0_main();                 // Loop endlessly
 
-    console_init();
-    console_printline("Starting Ubutnu...");
-    //todo loading OS
-    console_clear();
-    console_run();
-    console_printline("Starting Ubutnu...");
-
-
-    while(1){
-        wait_msec(1000);
-        console_printline("1 sec passed");
-    }
-
-
-
-    setInterfaceScaling(2);
-    //console_printline("Hello world yeet");
-    while(1){
-        char* temp = uart_readline();
-        console_printline(temp);
-
-        //setInterfaceScaling(1);
-        //uart_print("\r\n");
-        free(temp);
-    }
-
-    int g = 0;
-    while(1){
-        for(int i = 0; i <= getWidth(); i++){
-            for(int a = 0; a <= getHeight(); a++){
-                if(g % 3 == 0){
-                    drawPixel(a,i,green);
-                }
-                else if(g % 3 == 1){
-                    drawPixel(a,i,red);
-                }
-                else if(g % 3 == 2){
-                    drawPixel(a,i,blue);
-                }
-            }
-        }
-        g++;
-    }
+    initConsole();
+    runConsole();
 }

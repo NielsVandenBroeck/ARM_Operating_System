@@ -7,35 +7,80 @@
 static int currentConsolePosition[]={10,10};//x,y
 static int CURRENT_COLOR = green;
 
-/**
- * Initializes UART by setting all the memory addresses to the correct values
- * @param baud: The baud rate of serial communication
- */
-void console_init(){
+
+void initConsole(){
     //Make the frame buffer ready to use
     fb_init();
 }
 
-void console_run(){
-    console_print("Ubutnu@user");
-    drawCursor(&currentConsolePosition[0], &currentConsolePosition[1], CURRENT_COLOR);
+void runConsole(){
+    printText("Ubutnu@user");
+    nextLine();
     //todo wait for input
+    int x = 1;
+    while(1){
+        wait_msec(100);
+        printText("test line: ");
+        printInt(x);
+        nextLine();
+        x++;
+    }
 }
 
-/**
- * Prints a string to the UART
- * @param outputString: String to be printed
- */
-void console_print(char *outputString){
-    drawString(&currentConsolePosition[0], &currentConsolePosition[1], outputString, CURRENT_COLOR);
+void nextLine(){
+    currentConsolePosition[0] = XOFFSET; //On \r, go back to begin of screen
+    currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
 }
 
-void console_printline(char *outputString){
-    console_print(outputString);
-    console_nextline();
+char* readLine(){
+    //TODO
+    throw("console_readline function not implemented yet");
+    return "";
 }
 
-void console_print_int(unsigned int number){
+void clearConsole(){
+    drawScreen(black);
+    currentConsolePosition[0] = 10;
+    currentConsolePosition[1] = 10;
+}
+
+void setColor(int newColor){
+    CURRENT_COLOR = newColor;
+}
+
+void printText(char *s){
+    while (*s) {
+        printChar(*s);
+        s++; //read next character in string
+    }
+}
+
+void printChar(char c){
+    if (c == '\r') {
+        currentConsolePosition[0] = XOFFSET; //On \r, go back to begin of screen
+    } else if(c == '\n') {
+        currentConsolePosition[0] = XOFFSET;
+        currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
+    } else {
+        unsigned char *glyph = (unsigned char *)&font + (c < FONT_NUMGLYPHS ? c : 0) * FONT_BPG;
+
+        for (int i=0;i<FONT_HEIGHT;i++) {
+            for (int j=0;j<FONT_WIDTH;j++){
+                if(*glyph & 1 << j){
+                    drawPixel(currentConsolePosition[0]+j, currentConsolePosition[1]+i, CURRENT_COLOR); //1 value in bitmap, has to be colored
+                }
+                else {
+                    //todo background/highlights?
+                    drawPixel(currentConsolePosition[0]+j, currentConsolePosition[1]+i, 0x000000); //0 value in bitmap, pixel set to background color
+                }
+            }
+            glyph += FONT_BPL; //position for next row
+        }
+        currentConsolePosition[0] += FONT_WIDTH; //position for next character
+    }
+}
+
+void printInt(unsigned int number){
     unsigned int tempNumber = number;
     int devider = 1;
     while(tempNumber > 9){
@@ -46,76 +91,17 @@ void console_print_int(unsigned int number){
     while(devider >= 1){
         unsigned int digitNumber = (unsigned int)(number / devider);
         char asChar = digitNumber + '0';
-        console_printc(asChar);
+        printChar(asChar);
         number -= digitNumber * devider;
         devider = (int)(devider / 10);
     }
-    console_print("\r\n");
 }
 
-void console_printc(char c){
-    if(c == '\n'){
-        uart_writeByteBlocking('\r');
-    }
-    char* charString = (char*)malloc(1 * sizeof(char));
-    charString[0] = c;
-    console_print(charString);
-    free(charString);
-}
-
-void console_nextline(){
-    console_print("\r\n");
-}
-
-char* console_readline(){
-    //TODO
-    throw("console_readline function not implemented yet");
-    return "";
-}
-
-void console_clear(){
-    drawScreen(black);
-    currentConsolePosition[0] = 10;
-    currentConsolePosition[1] = 10;
-}
-
-void console_color(int newColor){
-    CURRENT_COLOR = newColor;
-}
-
-void drawCursor(int* x, int* y, int color){
+void drawCursor(){
     for (int i=0;i<LINEHEIGHT;i++) {
         for (int j=0;j<1;j++){
-            drawPixel((*x)+j, (*y)+i, color);
+            drawPixel(currentConsolePosition[0]+j, currentConsolePosition[1]+i, CURRENT_COLOR);
         }
     }
-    (*x) += FONT_WIDTH;
-}
-
-void drawString(int* x, int* y, char *s, int color){
-    while (*s) {
-        if (*s == '\r') {
-            (*x) = XOFFSET; //On \r, go back to begin of screen
-        } else if(*s == '\n') {
-            (*x) = XOFFSET;
-            (*y) += LINEHEIGHT; //on \n, start on new line below
-        } else {
-            unsigned char *glyph = (unsigned char *)&font + (*s < FONT_NUMGLYPHS ? *s : 0) * FONT_BPG;
-
-            for (int i=0;i<FONT_HEIGHT;i++) {
-                for (int j=0;j<FONT_WIDTH;j++){
-                    if(*glyph & 1 << j){
-                        drawPixel((*x)+j, (*y)+i, color); //1 value in bitmap, has to be colored
-                    }
-                    else {
-                        //todo background/highlights?
-                        drawPixel((*x)+j, (*y)+i, 0x000000); //0 value in bitmap, pixel set to background color
-                    }
-                }
-                glyph += FONT_BPL; //position for next row
-            }
-            (*x) += FONT_WIDTH; //position for next character
-        }
-        s++; //read next character in string
-    }
+    currentConsolePosition[0] += FONT_WIDTH;
 }
