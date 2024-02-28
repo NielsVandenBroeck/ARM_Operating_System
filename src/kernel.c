@@ -16,6 +16,7 @@ void core3_main(void)
         wait_msec(3000);
         printText("core3:", green);
         printInt(core3_val, green);
+        printChar('\n', green);
         if (core3_val < 100) core3_val++;
     }
 }
@@ -56,6 +57,7 @@ void core0_main(void)
         wait_msec(1000);
         printText("core0:", green);
         printInt(core0_val, green);
+        printChar('\n', green);
         if (core0_val < 100) core0_val++;
     }
 }
@@ -63,9 +65,7 @@ void core0_main(void)
 void main()
 {
     initConsole();
-    start_core3(core3_main);      // Kick it off on core 3
+    start_core3(core3_main); // Kick it off on core 3
     core0_main();                 // Loop endlessly
-
-
     runConsole();
 }
