@@ -9,7 +9,7 @@ static int CURRENT_COLOR = green;
 
 void initConsole(){
     //Make the frame buffer ready to use
-    fb_init();
+    fb_init(1);
 }
 
 void runConsole(){
@@ -20,7 +20,7 @@ void runConsole(){
 
 void nextLine(){
     currentConsolePosition[0] = XOFFSET; //On \r, go back to begin of screen
-    currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
+    currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line belo
 }
 
 char* readLine(){
@@ -52,6 +52,10 @@ void printChar(char c, int color){
     } else if(c == '\n') {
         currentConsolePosition[0] = XOFFSET;
         currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
+        printInt(currentConsolePosition[1],red);
+        if(currentConsolePosition[1] >= getHeight()/2){
+            scrollUp();
+        }
     } else {
         unsigned char *glyph = (unsigned char *)&font + (c < FONT_NUMGLYPHS ? c : 0) * FONT_BPG;
 
@@ -107,5 +111,31 @@ void drawCursor(){
 void clearCursor(){
     for (int i=-2;i<LINEHEIGHT;i++) {
         drawPixel(currentConsolePosition[0]-1, currentConsolePosition[1]+i, black);
+    }
+}
+
+//void scrollUp(){
+//    //start at the top, loop over every line, push it up by one line.
+//    for(int line = 0; line < getHeight()/10; line++){
+//        for(int y = line*LINEHEIGHT; y < line*LINEHEIGHT+LINEHEIGHT; y++){
+//            for(int x = 0; x < getWidth(); x++){
+//                int color = getPixelColor(x,y);
+//                //drawPixel(x,y, black);
+//                drawPixel(x,y-LINEHEIGHT,color);
+//            }
+//        }
+//    }
+//    currentConsolePosition[1] -= LINEHEIGHT;
+//}
+
+void scrollUp(){
+    //start at the top, loop over every line, push it up by one line.
+    for(int y = 0; y < getHeight(); y++){
+        for(int x = 0; x < getWidth(); x++){
+            if(y-10 <= 0) continue;
+            int color = getPixelColor(x,y);
+            drawPixel(x,y, black);
+            drawPixel(x,y-10,color);
+        }
     }
 }

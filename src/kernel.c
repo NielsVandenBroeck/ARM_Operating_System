@@ -54,18 +54,20 @@ void core0_main(void)
     unsigned int core0_val = 0;
 
     while (1) {
-        wait_msec(1000);
+        wait_msec(100);
         printText("core0:", green);
         printInt(core0_val, green);
         printChar('\n', green);
         if (core0_val < 100) core0_val++;
+        //setRotation(core0_val%4);
     }
 }
 
 void main()
 {
     initConsole();
-    start_core3(core3_main); // Kick it off on core 3
+    //start_core3(core3_main); // Kick it off on core 3
+    //colorTest2();
     core0_main();                 // Loop endlessly
-    runConsole();
+    //runConsole();
 }

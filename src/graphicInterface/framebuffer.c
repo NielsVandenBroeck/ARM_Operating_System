@@ -2,9 +2,10 @@
 #include "../basic/mb.h"
 #include "../basic/error.h"
 #include "../Command-Line-Interface/console.h"
+#include "framebuffer.h"
 
-unsigned int width, height, pitch, isrgb;
-unsigned int sizeScale = 2;
+unsigned int width, height, pitch, isrgb, rotation;
+unsigned int sizeScale = 1;
 unsigned char *fb;
 
 void fb_init()
@@ -60,6 +61,7 @@ void fb_init()
         height = mbox[11];      // Actual physical height
         pitch = mbox[33];       // Number of bytes per line
         isrgb = mbox[24];       // Pixel order
+        setRotation(0);
         fb = (unsigned char *)((long)mbox[28]);
     }
 }
@@ -72,21 +74,53 @@ unsigned int getWidth(){
     return width;
 }
 
+void setRotation(int angle){
+    rotation = angle;
+    if(rotation == 1 || rotation == 3){
+        width = mbox[11];
+        height = mbox[10];
+    } else{
+        width = mbox[10];
+        height = mbox[11];
+    }
+}
+
 void drawPixel(int x, int y, int color)
 {
     for(int scalex = 0; scalex < sizeScale; scalex++){
         for(int scaley = 0; scaley < sizeScale; scaley++){
             int newY = (y * sizeScale) + scaley;
             int newX = (x * sizeScale) + scalex;
-            int offs = (newY * pitch) + (newX * 4);
+            //calculate rotation for vertical/horizontal screens
+            int coords[2] = {newX, newY};
+            int sizes[2] = {width, height};
+            int rotatedX = (rotation >= 2) ? sizes[rotation-2] - coords[rotation % 2] : coords[rotation % 2];
+            int rotatedY = (0 < rotation && rotation < 3) ? sizes[rotation-1] - coords[rotation-1] : coords[(rotation+1) % 2];
+            int offs = (rotatedY * pitch) + (rotatedX * 4);
             *((unsigned int*)(fb + offs)) = color;
         }
     }
 }
 
+void drawScaledPixels(int x, int y, int color){
+    for(int scalex = 0; scalex < sizeScale; scalex++){
+        for(int scaley = 0; scaley < sizeScale; scaley++){
+            int newY = (y * sizeScale) + scaley;
+            int newX = (x * sizeScale) + scalex;
+            //todo remove loops in drawpixel and make it work
+            //drawPixel(newX, newY, color);
+        }
+    }
+}
+
+int getPixelColor(int x, int y){
+    int offs = (x * pitch) + (y * 4);
+    return *((unsigned int*)(fb + offs));
+}
+
 void drawScreen(int color){
-    for(int x = 0; x < getHeight(); x++){
-        for(int y = 0; y < getWidth(); y++){
+    for(int x = 0; x < width; x++){
+        for(int y = 0; y < height; y++){
             drawPixel(x,y,color);
         }
     }
@@ -115,6 +149,30 @@ void colorTest(){
                     drawPixel(x, i, newColor);
                 }
                 x++;
+            }
+        }
+    }
+}
+
+void colorTest2(){
+    for(int x = 0; x < width; x++){
+        for(int y = 0; y < height; y++){
+            switch((y/10)%5){
+                case 0:
+                    drawPixel(x,y,black);
+                    break;
+                case 1:
+                    drawPixel(x,y,white);
+                    break;
+                case 2:
+                    drawPixel(x,y,green);
+                    break;
+                case 3:
+                    drawPixel(x,y,red);
+                    break;
+                case 4:
+                    drawPixel(x,y,blue);
+                    break;
             }
         }
     }

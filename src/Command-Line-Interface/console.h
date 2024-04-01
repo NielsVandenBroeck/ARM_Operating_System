@@ -28,3 +28,5 @@ void runCursor();
 void drawCursor();
 
 void clearCursor();
+
+void scrollUp();
