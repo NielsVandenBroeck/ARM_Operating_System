@@ -51,10 +51,10 @@ void printChar(char c, int color){
         currentConsolePosition[0] = XOFFSET; //On \r, go back to begin of screen
     } else if(c == '\n') {
         currentConsolePosition[0] = XOFFSET;
-        currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
-        printInt(currentConsolePosition[1],red);
-        if(currentConsolePosition[1] >= getHeight()/2){
+        if(currentConsolePosition[1] >= getHeight()-LINEHEIGHT*10){
             scrollUp();
+        } else {
+            currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
         }
     } else {
         unsigned char *glyph = (unsigned char *)&font + (c < FONT_NUMGLYPHS ? c : 0) * FONT_BPG;
@@ -62,11 +62,11 @@ void printChar(char c, int color){
         for (int i=0;i<FONT_HEIGHT;i++) {
             for (int j=0;j<FONT_WIDTH;j++){
                 if(*glyph & 1 << j){
-                    drawPixel(currentConsolePosition[0]+j, currentConsolePosition[1]+i, color); //1 value in bitmap, has to be colored
+                    drawScaledPixels(currentConsolePosition[0]+j, currentConsolePosition[1]+i, color); //1 value in bitmap, has to be colored
                 }
                 else {
                     //todo background/highlights?
-                    //drawPixel(currentConsolePosition[0]+j, currentConsolePosition[1]+i, 0x000000); //0 value in bitmap, pixel set to background color
+                    //drawScaledPixels(currentConsolePosition[0]+j, currentConsolePosition[1]+i, 0x000000); //0 value in bitmap, pixel set to background color
                 }
             }
             glyph += FONT_BPL; //position for next row
@@ -104,13 +104,13 @@ void runCursor(){
 
 void drawCursor(){
     for (int i=-2;i<LINEHEIGHT;i++) {
-        drawPixel(currentConsolePosition[0]-1, currentConsolePosition[1]+i, CURRENT_COLOR);
+        drawScaledPixels(currentConsolePosition[0]-1, currentConsolePosition[1]+i, CURRENT_COLOR);
     }
 }
 
 void clearCursor(){
     for (int i=-2;i<LINEHEIGHT;i++) {
-        drawPixel(currentConsolePosition[0]-1, currentConsolePosition[1]+i, black);
+        drawScaledPixels(currentConsolePosition[0]-1, currentConsolePosition[1]+i, black);
     }
 }
 
@@ -120,22 +120,21 @@ void clearCursor(){
 //        for(int y = line*LINEHEIGHT; y < line*LINEHEIGHT+LINEHEIGHT; y++){
 //            for(int x = 0; x < getWidth(); x++){
 //                int color = getPixelColor(x,y);
-//                //drawPixel(x,y, black);
-//                drawPixel(x,y-LINEHEIGHT,color);
+//                //drawScaledPixels(x,y, black);
+//                drawScaledPixels(x,y-LINEHEIGHT,color);
 //            }
 //        }
 //    }
-//    currentConsolePosition[1] -= LINEHEIGHT;
 //}
 
 void scrollUp(){
     //start at the top, loop over every line, push it up by one line.
-    for(int y = 0; y < getHeight(); y++){
-        for(int x = 0; x < getWidth(); x++){
-            if(y-10 <= 0) continue;
-            int color = getPixelColor(x,y);
-            drawPixel(x,y, black);
-            drawPixel(x,y-10,color);
+    for(int line = 0; line < getHeight()/10; line++){
+        for(int y = line*LINEHEIGHT; y < line*LINEHEIGHT+LINEHEIGHT; y++){
+            for(int x = 0; x < getWidth(); x++){
+                int color = getPixelColor(x,y);
+                drawScaledPixels(x,y-10,color);
+            }
         }
     }
 }

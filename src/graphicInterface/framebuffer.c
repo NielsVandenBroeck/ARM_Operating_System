@@ -87,6 +87,11 @@ void setRotation(int angle){
 
 void drawPixel(int x, int y, int color)
 {
+    int offs = (y * pitch) + (x * 4);
+    *((unsigned int*)(fb + offs)) = color;
+}
+
+void drawScaledPixels(int x, int y, int color){
     for(int scalex = 0; scalex < sizeScale; scalex++){
         for(int scaley = 0; scaley < sizeScale; scaley++){
             int newY = (y * sizeScale) + scaley;
@@ -96,32 +101,21 @@ void drawPixel(int x, int y, int color)
             int sizes[2] = {width, height};
             int rotatedX = (rotation >= 2) ? sizes[rotation-2] - coords[rotation % 2] : coords[rotation % 2];
             int rotatedY = (0 < rotation && rotation < 3) ? sizes[rotation-1] - coords[rotation-1] : coords[(rotation+1) % 2];
-            int offs = (rotatedY * pitch) + (rotatedX * 4);
-            *((unsigned int*)(fb + offs)) = color;
-        }
-    }
-}
-
-void drawScaledPixels(int x, int y, int color){
-    for(int scalex = 0; scalex < sizeScale; scalex++){
-        for(int scaley = 0; scaley < sizeScale; scaley++){
-            int newY = (y * sizeScale) + scaley;
-            int newX = (x * sizeScale) + scalex;
-            //todo remove loops in drawpixel and make it work
-            //drawPixel(newX, newY, color);
+            drawPixel(rotatedX, rotatedY, color);
         }
     }
 }
 
 int getPixelColor(int x, int y){
-    int offs = (x * pitch) + (y * 4);
+    int offs = (y * pitch) + (x * 4);
     return *((unsigned int*)(fb + offs));
 }
 
 void drawScreen(int color){
+
     for(int x = 0; x < width; x++){
         for(int y = 0; y < height; y++){
-            drawPixel(x,y,color);
+            drawScaledPixels(x,y,color);
         }
     }
 }
@@ -144,9 +138,9 @@ void colorTest(){
     for(int r = 0; r < 256; r += 4){
         for(int g = 0; g < 256; g += 4){
             for(int b = 0; b < 256; b += 4){
-                float newColor = ((b & 0xff) << 16) + ((g & 0xff) << 8) + ((r & 0xff));
+                int newColor = ((b & 0xff) << 16) + ((g & 0xff) << 8) + ((r & 0xff));
                 for(int i = 0; i < 5; i++){
-                    drawPixel(x, i, newColor);
+                    drawScaledPixels(x, i, newColor);
                 }
                 x++;
             }
@@ -159,19 +153,19 @@ void colorTest2(){
         for(int y = 0; y < height; y++){
             switch((y/10)%5){
                 case 0:
-                    drawPixel(x,y,black);
+                    drawScaledPixels(x,y,black);
                     break;
                 case 1:
-                    drawPixel(x,y,white);
+                    drawScaledPixels(x,y,white);
                     break;
                 case 2:
-                    drawPixel(x,y,green);
+                    drawScaledPixels(x,y,green);
                     break;
                 case 3:
-                    drawPixel(x,y,red);
+                    drawScaledPixels(x,y,red);
                     break;
                 case 4:
-                    drawPixel(x,y,blue);
+                    drawScaledPixels(x,y,blue);
                     break;
             }
         }
@@ -204,7 +198,7 @@ void setInterfaceScaling(unsigned int scalingValue){
             int oldX = (x * oldScaleSize);
             int oldOffs = (oldY * pitch) + (oldX * 4);
             //int newoffs = (y * pitch) + (x * 4);
-            drawPixel(x, y, *((unsigned int*)(fb + oldOffs)));
+            drawScaledPixels(x, y, *((unsigned int*)(fb + oldOffs)));
             //*((unsigned int*)(fb + newoffs)) = *((unsigned int*)(fb + oldOffs));
         }
     }

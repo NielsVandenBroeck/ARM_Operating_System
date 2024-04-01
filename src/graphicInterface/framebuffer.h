@@ -16,6 +16,8 @@ void drawScaledPixels(int x, int y, int color);
 
 void setInterfaceScaling(unsigned int scalingValue);
 
+void printtest();
+
 void wait_msec(unsigned int n);
 
 void colorTest();
