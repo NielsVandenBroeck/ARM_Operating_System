@@ -114,18 +114,7 @@ void clearCursor(){
     }
 }
 
-//void scrollUp(){
-//    //start at the top, loop over every line, push it up by one line.
-//    for(int line = 0; line < getHeight()/10; line++){
-//        for(int y = line*LINEHEIGHT; y < line*LINEHEIGHT+LINEHEIGHT; y++){
-//            for(int x = 0; x < getWidth(); x++){
-//                int color = getPixelColor(x,y);
-//                //drawScaledPixels(x,y, black);
-//                drawScaledPixels(x,y-LINEHEIGHT,color);
-//            }
-//        }
-//    }
-//}
+
 
 void scrollUp(){
     //start at the top, loop over every line, push it up by one line.
@@ -133,7 +122,7 @@ void scrollUp(){
         for(int y = line*LINEHEIGHT; y < line*LINEHEIGHT+LINEHEIGHT; y++){
             for(int x = 0; x < getWidth(); x++){
                 int color = getPixelColor(x,y);
-                drawScaledPixels(x,y-10,color);
+                drawScaledPixels(x,y-LINEHEIGHT,color);
             }
         }
     }
