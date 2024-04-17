@@ -1,3 +1,4 @@
+#include "kernel.h"
 #include "uart/uart.h"
 #include "graphicInterface/framebuffer.h"
 #include "Command-Line-Interface/console.h"
@@ -54,7 +55,6 @@ void core0_main(void)
     unsigned int core0_val = 0;
 
     while (1) {
-        wait_msec(50);
         printText("core0:", green);
         printInt(core0_val, green);
         printChar('\n', green);
@@ -67,7 +67,12 @@ void main()
 {
     initConsole();
     //start_core3(core3_main); // Kick it off on core 3
-    colorTest2();
+    //colorTest2();
     //core0_main();                 // Loop endlessly
-    runConsole();
+    //runConsole();
+
+    irq_init_vectors();
+    enable_interrupt_controller();
+    irq_barrier();
+    irq_enable();
 }
