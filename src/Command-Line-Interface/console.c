@@ -4,7 +4,7 @@
 #include "console.h"
 #include "../Command-Line-Interface/Font.h"
 
-static int currentConsolePosition[]={10,10};//x,y
+static int currentConsolePosition[]={XOFFSET,LINEHEIGHT+2};//x,y
 static int CURRENT_COLOR = green;
 
 void initConsole(){
@@ -51,7 +51,7 @@ void printChar(char c, int color){
         currentConsolePosition[0] = XOFFSET; //On \r, go back to begin of screen
     } else if(c == '\n') {
         currentConsolePosition[0] = XOFFSET;
-        if(currentConsolePosition[1] >= getHeight()-LINEHEIGHT*10){
+        if(currentConsolePosition[1] >= getHeight()-LINEHEIGHT*5){
             scrollUp();
         } else {
             currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
@@ -114,27 +114,21 @@ void clearCursor(){
     }
 }
 
-//void scrollUp(){
-//    //start at the top, loop over every line, push it up by one line.
-//    for(int line = 0; line < getHeight()/10; line++){
-//        for(int y = line*LINEHEIGHT; y < line*LINEHEIGHT+LINEHEIGHT; y++){
-//            for(int x = 0; x < getWidth(); x++){
-//                int color = getPixelColor(x,y);
-//                //drawScaledPixels(x,y, black);
-//                drawScaledPixels(x,y-LINEHEIGHT,color);
-//            }
-//        }
-//    }
-//}
+
 
 void scrollUp(){
-    //start at the top, loop over every line, push it up by one line.
-    for(int line = 0; line < getHeight()/10; line++){
+    //start at the top, loop over every line,
+    // push it up by one line.
+    for(int line = 1; line < getHeight()/10; line++){
         for(int y = line*LINEHEIGHT; y < line*LINEHEIGHT+LINEHEIGHT; y++){
             for(int x = 0; x < getWidth(); x++){
                 int color = getPixelColor(x,y);
-                drawScaledPixels(x,y-10,color);
+                drawScaledPixels(x,y-LINEHEIGHT,color);
             }
         }
     }
+}
+
+void setScaling(int size){
+    setScaleSize(size);
 }

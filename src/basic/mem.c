@@ -5,7 +5,7 @@
  * @param reg: memory address
  * @param val: value
  */
-void mmio_write(long reg, unsigned int val){
+void mmio_write(unsigned int reg, unsigned int val){
     *(volatile unsigned int *)reg = val;
 }
 
@@ -13,6 +13,6 @@ void mmio_write(long reg, unsigned int val){
  * Memory-Mapped I/O read, reads the value of a memory address
  * @param reg: memory address
  */
-unsigned int mmio_read(long reg){
+unsigned int mmio_read(unsigned int  reg){
     return *(volatile unsigned int *)reg;
 }

@@ -14,7 +14,7 @@ _start:
     str     w1, [x0, #(LOCAL_PRESCALER - LOCAL_CONTROL)]
 
     ldr     x0, =OSC_FREQ
-    //msr     cntfrq_el0, x0
+    msr     cntfrq_el0, x0
     msr     cntvoff_el2, xzr
 
     // Check processor ID is zero (executing on main core), else hang

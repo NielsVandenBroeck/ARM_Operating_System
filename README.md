@@ -7,6 +7,7 @@ https://www.rpi4os.com/
 https://developer.arm.com/documentation/den0024/a/
 https://github.com/jserv/mini-arm-os/tree/master
 https://www.raspberrypi.org/app/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
+https://github.com/zeoneo/rpi3b-bare-metal/tree/master
  ```
 
 ## how to get started

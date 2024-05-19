@@ -6,6 +6,7 @@
 
 unsigned int width, height, pitch, isrgb, rotation;
 unsigned int sizeScale = 1;
+unsigned int rotation = 0;
 unsigned char *fb;
 
 void fb_init()
@@ -74,21 +75,35 @@ unsigned int getWidth(){
     return width;
 }
 
+void setScaleSize(int size){
+    width *= sizeScale;
+    height *= sizeScale;
+    width /= size;
+    height /= size;
+    sizeScale = size;
+}
+
+int getScaleSize(){
+    return sizeScale;
+}
+
 void setRotation(int angle){
-    rotation = angle;
-    if(rotation == 1 || rotation == 3){
-        width = mbox[11];
-        height = mbox[10];
-    } else{
-        width = mbox[10];
-        height = mbox[11];
+    if(angle%2 != rotation%2){
+        unsigned int temp = width;
+        width = height;
+        height = temp;
     }
+    rotation = angle;
 }
 
 void drawPixel(int x, int y, int color)
 {
     int offs = (y * pitch) + (x * 4);
     *((unsigned int*)(fb + offs)) = color;
+}
+
+void calculateTransformedPixel(int* x, int* y){
+
 }
 
 void drawScaledPixels(int x, int y, int color){
@@ -98,16 +113,20 @@ void drawScaledPixels(int x, int y, int color){
             int newX = (x * sizeScale) + scalex;
             //calculate rotation for vertical/horizontal screens
             int coords[2] = {newX, newY};
-            int sizes[2] = {width, height};
-            int rotatedX = (rotation >= 2) ? sizes[rotation-2] - coords[rotation % 2] : coords[rotation % 2];
-            int rotatedY = (0 < rotation && rotation < 3) ? sizes[rotation-1] - coords[rotation-1] : coords[(rotation+1) % 2];
+            int sizes[2] = {mbox[11], mbox[10]};
+            int rotatedX = (rotation >= 2) ? sizes[1] - coords[rotation-2] : coords[rotation%2];
+            int rotatedY = (0 < rotation && rotation < 3) ? sizes[0] - coords[rotation-1] : coords[(rotation+1)%2];
             drawPixel(rotatedX, rotatedY, color);
         }
     }
 }
 
 int getPixelColor(int x, int y){
-    int offs = (y * pitch) + (x * 4);
+    int coords[2] = {x * sizeScale, y * sizeScale};
+    int sizes[2] = {mbox[11], mbox[10]};
+    int rotatedX = (rotation >= 2) ? sizes[1] - coords[rotation-2] : coords[rotation%2];
+    int rotatedY = (0 < rotation && rotation < 3) ? sizes[0] - coords[rotation-1] : coords[(rotation+1)%2];
+    int offs = (rotatedY * pitch) + (rotatedX * 4);
     return *((unsigned int*)(fb + offs));
 }
 

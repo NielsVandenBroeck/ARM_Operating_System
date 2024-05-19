@@ -1,73 +1,75 @@
+#include "kernel.h"
 #include "uart/uart.h"
 #include "graphicInterface/framebuffer.h"
 #include "Command-Line-Interface/console.h"
 #include "basic/error.h"
-#include "sd_card/sd_card.h"
+//#include "sd_card/sd_card.h"
 
 #include "basic/multicore.h"
 
-void core3_main(void)
+
+void core1_main(void)
 {
-    unsigned int core3_val = 0;
-
-    clear_core3();                // Only run once
-
-    while (1) {
-        wait_msec(3000);
-        printText("core3:", green);
-        printInt(core3_val, green);
-        printChar('\n', green);
-        if (core3_val < 100) core3_val++;
-    }
+    // user input
+    wait_msec(3000);
+    colorTest();
 }
 
 void core2_main(void)
 {
-    unsigned int core2_val = 0;
 
-    clear_core2();                // Only run once
-
-    while (1) {
-        wait_msec(2000);
-        printText("core2:", green);
-        printInt(core2_val, green);
-        if (core2_val < 100) core2_val++;
-    }
 }
 
-void core1_main(void)
+void core3_main(void)
 {
-    unsigned int core1_val = 0;
 
-    clear_core1();                // Only run once
+}
 
+void testfunction(){
+    unsigned int core0_val = 0;
     while (1) {
-        wait_msec(1000);
-        printText("core1:", green);
-        printInt(core1_val, green);
-        if (core1_val < 100) core1_val++;
+        printText("core0:", green);
+        printInt(core0_val, green);
+        printChar('\n', green);
+        core0_val++;
+        wait_msec(10);
+//        if(core0_val == 20){
+//            setScaleSize(1);
+//        }
     }
 }
 
 void core0_main(void)
 {
-    unsigned int core0_val = 0;
-
-    while (1) {
-        wait_msec(50);
-        printText("core0:", green);
-        printInt(core0_val, green);
-        printChar('\n', green);
-        if (core0_val < 1000) core0_val++;
-        //setRotation(core0_val%4);
+    /*
+    initConsole();
+    //start_core3(core3_main); // Kick it off on core 3
+    colorTest2();
+    //core0_main();                 // Loop endlessly
+    runConsole();*/
+    initConsole();
+    printText("waiting...\n", green);
+    wait_msec(10000);
+    printText("starting uart init\n", green);
+    uart_init();
+    printText("uart init done\n", green);
+    wait_msec(2000);
+    int i = 0;
+    while(1){
+        printText("hello world: ", green);
+        printInt(i, green);
+        printText("\n", green);
+        uart_writeText("Test \n");
+        wait_msec(2000);
+        i++;
     }
 }
 
 void main()
 {
-    initConsole();
-    //start_core3(core3_main); // Kick it off on core 3
-    colorTest2();
-    //core0_main();                 // Loop endlessly
-    runConsole();
+    core0_main();
+    //irq_init_vectors();
+    //enable_interrupt_controller();
+    //irq_barrier();
+    //irq_enable();
 }
