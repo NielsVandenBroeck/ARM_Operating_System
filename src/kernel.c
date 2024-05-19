@@ -5,6 +5,7 @@
 #include "sd_card/sd_card.h"
 #include "basic/multicore.h"
 #include "basic/keyboard_interrupts.h"
+#include "data_structures/Array/array.h"
 
 void core1_main(void)
 {
@@ -15,8 +16,9 @@ void core1_main(void)
 
 void core0_main(void)
 {
-    initConsole();
+
     runConsole();
+
 
 //    uart_init();
 //    while(1){
@@ -28,6 +30,48 @@ void core0_main(void)
 
 void main()
 {
+    initConsole();
+    Array* myArray = newArray(10,sizeof (int));
+    int* numbers = (int *)myArray->firstItem;
+
+    for(int i = 0; i < 10; i++){
+        numbers[i] = i;
+    }
+
+    Array* myArray1 = newArray(10,sizeof (int));
+    int* numbers1 = (int *)myArray1->firstItem;
+    for(int i = 0; i < 10; i++){
+        numbers1[i] = i + 10;
+    }
+
+    int* numbers2 = (int *)myArray->firstItem;
+    for(int i = 0; i < 10;  i++){
+        printText("Number: ", green);
+        printInt(numbers2[i], green);
+        printText("\n", green);
+    }
     start_core1(core1_main);
     core0_main();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
