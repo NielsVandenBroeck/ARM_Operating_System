@@ -1,5 +1,5 @@
 #include "kernel.h"
-#include "uart/uart.h"
+#include "temp_uart/uart.h"
 #include "graphicInterface/framebuffer.h"
 #include "Command-Line-Interface/console.h"
 #include "basic/error.h"
