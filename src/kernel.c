@@ -39,7 +39,7 @@ void main()
     }
 
     arrayAppend(myArray);
-    numbers[10] = 10;
+    *(int *)arrayGetItem(myArray,10) = 10;
 
     printInt(arrayGetLength(myArray),green);
 
