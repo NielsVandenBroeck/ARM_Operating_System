@@ -1,5 +1,5 @@
 #include "kernel.h"
-#include "temp_uart/uart.h"
+#include "uart//uart.h"
 #include "graphicInterface/framebuffer.h"
 #include "Command-Line-Interface/console.h"
 #include "basic/error.h"
@@ -19,6 +19,8 @@ void core2_main(void)
 {
 
 }
+
+int i = 0;
 
 void core3_main(void)
 {
@@ -49,19 +51,16 @@ void core0_main(void)
     runConsole();*/
     initConsole();
     printText("waiting...\n", green);
-    wait_msec(10000);
+    wait_msec(1000);
     printText("starting uart init\n", green);
     uart_init();
     printText("uart init done\n", green);
     wait_msec(2000);
     int i = 0;
+    uart_print("Welcome waiting for input: \n");
     while(1){
-        printText("hello world: ", green);
-        printInt(i, green);
-        printText("\n", green);
-        uart_writeText("Test \n");
-        wait_msec(2000);
-        i++;
+        char text_back = uart_readchar();
+        printChar(text_back, green);
     }
 }
 

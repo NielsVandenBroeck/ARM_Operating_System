@@ -81,15 +81,63 @@ void uart_init() {
 }
 
 unsigned int uart_isWriteByteReady() { return mmio_read(AUX_MU_LSR_REG) & 0x20; }
+unsigned int uart_isReadByteReady()  { return mmio_read(AUX_MU_LSR_REG) & 0x01; }
 
-void uart_writeByteBlockingActual(unsigned char ch) {
+/**
+ * Writes a char to the memory address of the UART
+ * @param ch: char to be written
+ */
+void uart_writeByteBlocking(unsigned char ch) {
     while (!uart_isWriteByteReady());
     mmio_write(AUX_MU_IO_REG, (unsigned int)ch);
 }
 
-void uart_writeText(char *buffer) {
-    while (*buffer) {
-        if (*buffer == '\n') uart_writeByteBlockingActual('\r');
-        uart_writeByteBlockingActual(*buffer++);
+/**
+ * Reads a char from the memory address of the UART
+ */
+unsigned char uart_readByteBlocking(){
+    while (!uart_isReadByteReady());
+    return (unsigned char)mmio_read(AUX_MU_IO_REG);
+}
+
+/**
+ * Prints a string to the UART
+ * @param outputString: String to be printed
+ */
+void uart_print(char *outputString){
+    while(*outputString) {
+        if(*outputString == '\n'){
+            uart_writeByteBlocking('\r');
+        }
+        uart_writeByteBlocking(*outputString++);
     }
+}
+
+void uart_printc(char c){
+    if(c == '\n'){
+        uart_writeByteBlocking('\r');
+    }
+    uart_writeByteBlocking(c);
+}
+
+char* uart_readline(){
+    int defaultLenght = 20;
+    char* input = (char *) malloc(20);
+    for(int i = 0; i <= defaultLenght; i++){
+        input[i] = uart_readByteBlocking();
+        if(input[i] == '\r'){
+            break;
+        }
+        uart_printc(input[i]);
+    }
+    uart_print("\r\n");
+    return input;
+}
+
+char uart_readchar(){
+    char input = uart_readByteBlocking();
+    if(input == '\r'){
+        input = '\n';
+    }
+    return input;
 }
