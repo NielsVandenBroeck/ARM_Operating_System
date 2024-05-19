@@ -30,3 +30,5 @@ void drawCursor();
 void clearCursor();
 
 void scrollUp();
+
+void setScaling(int size);

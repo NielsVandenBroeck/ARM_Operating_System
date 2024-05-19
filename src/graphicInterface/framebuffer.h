@@ -4,6 +4,10 @@ unsigned int getHeight();
 
 unsigned int getWidth();
 
+void setScaleSize(int size);
+
+int getScaleSize();
+
 void setRotation(int rotation);
 
 void drawScreen(int color);
@@ -23,6 +27,8 @@ void wait_msec(unsigned int n);
 void colorTest();
 
 void colorTest2();
+
+
 
 //default colors
 enum {
