@@ -1,6 +1,8 @@
 #include "array.h"
 #include "malloc.h"
-#include "../../basic/error.h"
+#include "../basic/error.h"
+#include "../graphicInterface/framebuffer.h"
+#include "../Command-Line-Interface/console.h"
 #include <stddef.h>
 
 Array* newArray(int length, int elmSize){
@@ -20,12 +22,10 @@ void arrayDelete(Array* array){
     arrayDelete(array->nextArray);
 }
 
-//todo check if lastindex < elmcount and fix that part gets added
 Array* ArrayConcat(Array* array1, Array* array2){
-//    if(array1->lastIndex <= array1->elmCount - 1){
-//        free(array1->firstItem + (array1->lastIndex + 1) * array1->elmSize);
-//        array1->elmCount = array1->lastIndex;
-//    }
+    if(array1->lastIndex <= array1->elmCount - 1){
+        array1->elmCount = array1->lastIndex;
+    }
     if(array1->nextArray == NULL){
         array1->nextArray = array2;
         return array1;
@@ -39,15 +39,11 @@ void* arrayGetItem(Array* array, int i){
         return 0;
     }
     if(i > array->lastIndex){
-
-        return arrayGetItem(array->nextArray, i - array->lastIndex);
+        return arrayGetItem(array->nextArray, i - array->lastIndex - 1);
     }
     return array->firstItem + array->elmSize * i;
 }
 
-void arrayRemoveItem(Array* array, int i){
-
-}
 
 /**
  * Add one memory space to the array
@@ -60,10 +56,9 @@ void arrayAppend(Array* array){
     if(array->nextArray != NULL){
         arrayAppend(array->nextArray);
     }
-    if(array->lastIndex >= array->elmCount - 1){
+    else if(array->lastIndex >= array->elmCount - 1){
         array->nextArray = newArray(10, array->elmSize);
         array->nextArray->lastIndex = 0;
-
     }
     else{
         array->lastIndex+=1;

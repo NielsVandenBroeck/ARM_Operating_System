@@ -21,13 +21,20 @@ void updateCursorPosition();
 
 void runCursor();
 
-void setScaling(int size);
-
-//temp public for testing
 void printText(char *outputString, int color);
-void printChar(char c, int color);
+
 void printInt(unsigned int number, int color);
+
+void printChar(char c, int color);
+
+void drawGlyph(char c, int color);
+
 void scrollUp();
+
 void drawCursor();
+
 void clearCursor();
+
 void setColor(int newColor);
+
+void drawFromBuffer(int startLine);

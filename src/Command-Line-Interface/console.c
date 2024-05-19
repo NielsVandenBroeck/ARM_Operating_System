@@ -5,21 +5,42 @@
 #include "../Command-Line-Interface/Font.h"
 #include "../basic/multicore.h"
 #include "../basic/keyboard_interrupts.h"
+#include "../data_structures/array.h"
 
 static int currentConsolePosition[]={XOFFSET,LINEHEIGHT+2};//x,y
 static int currentCursorPosition[]={XOFFSET,LINEHEIGHT+2};
 static int CURRENT_COLOR = green;
 
+Array* textBuffer;
+
+
 void initConsole(){
     //Make the frame buffer ready to use
     fb_init(1);
-    setScaling(2);
+    setScaleSize(2);
     setRotation(0);
+    //Create the array buffer for the displayed text
+    textBuffer = newArray(1,sizeof (Array));
+    Array* consoleLine = newArray(0,sizeof (char));
+    *(Array*)arrayGetItem(textBuffer,0) = *consoleLine;
     Attach(processChar);
 }
 
 void runConsole(){
-    printText("Ubutnu@user$ ", green);
+    int val = 0;
+    while(1){
+        printText("core0: ", green);
+        printInt(val,green);
+        printChar('\n',green);
+        clearConsole();
+        if(val > 100){
+            drawFromBuffer(val-100);
+        }
+        else{
+            drawFromBuffer(0);
+        }
+        val++;
+    }
     runCursor();
 }
 
@@ -30,7 +51,7 @@ void processChar(char c){
 void nextLine(){
     currentConsolePosition[0] = XOFFSET;
     if(currentConsolePosition[1] >= getHeight()-LINEHEIGHT*5){
-        scrollUp();
+        drawFromBuffer(0); //todo
     } else {
         currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
     }
@@ -61,31 +82,6 @@ void printText(char *s, int color){
     }
 }
 
-void printChar(char c, int color){
-    if (c == '\r') {
-        currentConsolePosition[0] = XOFFSET; //On \r, go back to begin of screen
-    } else if(c == '\n') {
-        nextLine();
-    } else {
-        unsigned char *glyph = (unsigned char *)&font + (c < FONT_NUMGLYPHS ? c : 0) * FONT_BPG;
-
-        for (int i=0;i<FONT_HEIGHT;i++) {
-            for (int j=0;j<FONT_WIDTH;j++){
-                if(*glyph & 1 << j){
-                    drawScaledPixels(currentConsolePosition[0]+j, currentConsolePosition[1]+i, color); //1 value in bitmap, has to be colored
-                }
-                else {
-                    //todo background/highlights?
-                    //drawScaledPixels(currentConsolePosition[0]+j, currentConsolePosition[1]+i, 0x000000); //0 value in bitmap, pixel set to background color
-                }
-            }
-            glyph += FONT_BPL; //position for next row
-        }
-        currentConsolePosition[0] += FONT_WIDTH; //position for next character
-    }
-    updateCursorPosition();
-}
-
 void printInt(unsigned int number, int color){
     unsigned int tempNumber = number;
     int devider = 1;
@@ -101,6 +97,45 @@ void printInt(unsigned int number, int color){
         number -= digitNumber * devider;
         devider = (int)(devider / 10);
     }
+}
+
+void printChar(char c, int color){
+    //todo \r, \t, ...
+    if(c == '\n') {
+        nextLine();
+
+        // end this console line and add a new one to textBuffer
+        arrayAppend(textBuffer);
+        Array* consoleLine = newArray(0,sizeof (char));
+        *(Array*)arrayGetItem(textBuffer,arrayGetLength(textBuffer)-1) = *consoleLine;
+    }
+    else{
+        // draw character on screen
+        drawGlyph(c,color);
+
+        // add character to the textBuffer
+        Array* currentLine = (Array*)arrayGetItem(textBuffer, arrayGetLength(textBuffer)-1);
+        arrayAppend(currentLine);
+        *(char *)arrayGetItem(currentLine,arrayGetLength(currentLine)-1) = c;
+    }
+    updateCursorPosition();
+}
+
+void drawGlyph(char c, int color){
+    unsigned char *glyph = (unsigned char *)&font + (c < FONT_NUMGLYPHS ? c : 0) * FONT_BPG;
+    for (int i=0;i<FONT_HEIGHT;i++) {
+        for (int j=0;j<FONT_WIDTH;j++){
+            if(*glyph & 1 << j){
+                drawScaledPixels(currentConsolePosition[0]+j, currentConsolePosition[1]+i, color); //1 value in bitmap, has to be colored
+            }
+            else {
+                //todo background/highlights?
+                //drawScaledPixels(currentConsolePosition[0]+j, currentConsolePosition[1]+i, 0x000000); //0 value in bitmap, pixel set to background color
+            }
+        }
+        glyph += FONT_BPL; //position for next row
+    }
+    currentConsolePosition[0] += FONT_WIDTH; //position for next character
 }
 
 void updateCursorPosition(){
@@ -131,21 +166,16 @@ void clearCursor(){
     }
 }
 
-
-
-void scrollUp(){
-    //start at the top, loop over every line,
-    // push it up by one line.
-    for(int line = 1; line < getHeight()/10; line++){
-        for(int y = line*LINEHEIGHT; y < line*LINEHEIGHT+LINEHEIGHT; y++){
-            for(int x = 0; x < getWidth(); x++){
-                int color = getPixelColor(x,y);
-                drawScaledPixels(x,y-LINEHEIGHT,color);
-            }
-        }
+void drawFromBuffer(int startLine){
+    unsigned int length = arrayGetLength(textBuffer);
+    if(arrayGetLength(textBuffer) > (getHeight()-1)/10){
+        length = (getHeight()-1)/10;
     }
-}
-
-void setScaling(int size){
-    setScaleSize(size);
+    for(int i = startLine; i < length;  i++){
+        Array* consoleLine = (Array *)arrayGetItem(textBuffer,i);
+        for(int j = 0; j < arrayGetLength(consoleLine);  j++){
+            drawGlyph(*(char *)(arrayGetItem(consoleLine, j)), blue);
+        }
+        nextLine();
+    }
 }
