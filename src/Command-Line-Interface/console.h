@@ -9,26 +9,25 @@ void initConsole();
 
 void runConsole();
 
+void processChar(char c);
+
 void nextLine();
 
 char* readLine();
 
 void clearConsole();
 
-void setColor(int newColor);
-
-void printText(char *outputString, int color);
-
-void printChar(char c, int color);
-
-void printInt(unsigned int number, int color);
+void updateCursorPosition();
 
 void runCursor();
 
-void drawCursor();
-
-void clearCursor();
-
-void scrollUp();
-
 void setScaling(int size);
+
+//temp public for testing
+void printText(char *outputString, int color);
+void printChar(char c, int color);
+void printInt(unsigned int number, int color);
+void scrollUp();
+void drawCursor();
+void clearCursor();
+void setColor(int newColor);

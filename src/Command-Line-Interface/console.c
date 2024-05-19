@@ -3,24 +3,35 @@
 #include "../basic/mem.h"
 #include "console.h"
 #include "../Command-Line-Interface/Font.h"
+#include "../basic/multicore.h"
 
 static int currentConsolePosition[]={XOFFSET,LINEHEIGHT+2};//x,y
+static int currentCursorPosition[]={XOFFSET,LINEHEIGHT+2};
 static int CURRENT_COLOR = green;
 
 void initConsole(){
     //Make the frame buffer ready to use
     fb_init(1);
+    setScaling(2);
+    setRotation(0);
 }
 
 void runConsole(){
     printText("Ubutnu@user$ ", green);
-    //todo wait for input
-    //runCursor();
+    runCursor();
+}
+
+void processChar(char c){
+    printChar(c,CURRENT_COLOR);
 }
 
 void nextLine(){
-    currentConsolePosition[0] = XOFFSET; //On \r, go back to begin of screen
-    currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line belo
+    currentConsolePosition[0] = XOFFSET;
+    if(currentConsolePosition[1] >= getHeight()-LINEHEIGHT*5){
+        scrollUp();
+    } else {
+        currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
+    }
 }
 
 char* readLine(){
@@ -33,6 +44,8 @@ void clearConsole(){
     drawScreen(black);
     currentConsolePosition[0] = 10;
     currentConsolePosition[1] = 10;
+    currentCursorPosition[0] = 10;
+    currentCursorPosition[1] = 10;
 }
 
 void setColor(int newColor){
@@ -50,12 +63,7 @@ void printChar(char c, int color){
     if (c == '\r') {
         currentConsolePosition[0] = XOFFSET; //On \r, go back to begin of screen
     } else if(c == '\n') {
-        currentConsolePosition[0] = XOFFSET;
-        if(currentConsolePosition[1] >= getHeight()-LINEHEIGHT*5){
-            scrollUp();
-        } else {
-            currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
-        }
+        nextLine();
     } else {
         unsigned char *glyph = (unsigned char *)&font + (c < FONT_NUMGLYPHS ? c : 0) * FONT_BPG;
 
@@ -73,6 +81,7 @@ void printChar(char c, int color){
         }
         currentConsolePosition[0] += FONT_WIDTH; //position for next character
     }
+    updateCursorPosition();
 }
 
 void printInt(unsigned int number, int color){
@@ -92,6 +101,13 @@ void printInt(unsigned int number, int color){
     }
 }
 
+void updateCursorPosition(){
+    clearCursor();
+    currentCursorPosition[0] = currentConsolePosition[0];
+    currentCursorPosition[1] = currentConsolePosition[1];
+    drawCursor();
+}
+
 void runCursor(){
     while(1){
         drawCursor();
@@ -99,18 +115,17 @@ void runCursor(){
         clearCursor();
         wait_msec(500);
     }
-    //todo with thread and break when action
 }
 
 void drawCursor(){
     for (int i=-2;i<LINEHEIGHT;i++) {
-        drawScaledPixels(currentConsolePosition[0]-1, currentConsolePosition[1]+i, CURRENT_COLOR);
+        drawScaledPixels(currentCursorPosition[0]-1, currentCursorPosition[1]+i, CURRENT_COLOR);
     }
 }
 
 void clearCursor(){
     for (int i=-2;i<LINEHEIGHT;i++) {
-        drawScaledPixels(currentConsolePosition[0]-1, currentConsolePosition[1]+i, black);
+        drawScaledPixels(currentCursorPosition[0]-1, currentCursorPosition[1]+i, black);
     }
 }
 
