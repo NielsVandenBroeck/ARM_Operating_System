@@ -1,10 +1,11 @@
 #include "array.h"
 #include "malloc.h"
+#include "../../basic/error.h"
 #include <stddef.h>
 
 Array* newArray(int length, int elmSize){
     void* firstItem = (char *)malloc(length * elmSize);
-    Array createdArray = {length, elmSize, length, firstItem, NULL};
+    Array createdArray = {length, elmSize, length-1, firstItem, NULL};
 
     Array* arrayItem = (Array *)malloc(sizeof(Array));
     arrayItem[0] = createdArray;
@@ -19,7 +20,12 @@ void arrayDelete(Array* array){
     arrayDelete(array->nextArray);
 }
 
+//todo check if lastindex < elmcount and fix that part gets added
 Array* ArrayConcat(Array* array1, Array* array2){
+//    if(array1->lastIndex <= array1->elmCount - 1){
+//        free(array1->firstItem + (array1->lastIndex + 1) * array1->elmSize);
+//        array1->elmCount = array1->lastIndex;
+//    }
     if(array1->nextArray == NULL){
         array1->nextArray = array2;
         return array1;
@@ -29,8 +35,12 @@ Array* ArrayConcat(Array* array1, Array* array2){
 }
 
 void* arrayGetItem(Array* array, int i){
-    if(i > array->elmCount){
-        return arrayGetItem(array->nextArray, i - array->elmCount);
+    if(array == NULL){
+        return 0;
+    }
+    if(i > array->lastIndex){
+
+        return arrayGetItem(array->nextArray, i - array->lastIndex);
     }
     return array->firstItem + array->elmSize * i;
 }
@@ -50,11 +60,13 @@ void arrayAppend(Array* array){
     if(array->nextArray != NULL){
         arrayAppend(array->nextArray);
     }
-    if(array->lastIndex >= array->elmCount){
+    if(array->lastIndex >= array->elmCount - 1){
         array->nextArray = newArray(10, array->elmSize);
+        array->nextArray->lastIndex = 0;
+
     }
     else{
-        array->lastIndex++;
+        array->lastIndex+=1;
     }
 };
 
@@ -65,9 +77,9 @@ void arrayAppend(Array* array){
  */
 int arrayGetLength(Array* array){
     if(array->nextArray == NULL){
-        return array->lastIndex;
+        return array->lastIndex+1;
     }
-    return array->elmCount + arrayGetLength(array->nextArray);
+    return array->lastIndex+1 + arrayGetLength(array->nextArray);
 }
 
 

@@ -1,5 +1,7 @@
 // GPIO
 #include "../basic/peripheral.h"
+#include "../basic/mem.h"
+#include "../basic/malloc.h"
 enum {
     GPFSEL0         = PERIPHERAL_BASE + 0x200000,
     GPSET0          = PERIPHERAL_BASE + 0x20001C,

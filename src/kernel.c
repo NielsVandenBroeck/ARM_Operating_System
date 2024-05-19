@@ -20,11 +20,11 @@ void core0_main(void)
     runConsole();
 
 
-//    uart_init();
-//    while(1){
-//        char text_back = uart_readchar();
-//        printChar(text_back, green);
-//    }
+    //    uart_init();
+    //    while(1){
+    //        char text_back = uart_readchar();
+    //        printChar(text_back, green);
+    //    }
 
 }
 
@@ -38,40 +38,25 @@ void main()
         numbers[i] = i;
     }
 
-    Array* myArray1 = newArray(10,sizeof (int));
-    int* numbers1 = (int *)myArray1->firstItem;
-    for(int i = 0; i < 10; i++){
-        numbers1[i] = i + 10;
-    }
+    arrayAppend(myArray);
+    numbers[10] = 10;
 
-    int* numbers2 = (int *)myArray->firstItem;
-    for(int i = 0; i < 10;  i++){
+    printInt(arrayGetLength(myArray),green);
+
+//    Array* myArray2 = newArray(20,sizeof (int));
+//    int* numbers2 = (int *)myArray2->firstItem;
+//    for(int i = 0; i < 20; i++){
+//        numbers2[i] = i+50;
+//    }
+//    ArrayConcat(myArray,myArray2);
+//    printText("Length:",green);
+//    printInt(arrayGetLength(myArray),green);
+    printChar('\n', green);
+    for(int i = 0; i < arrayGetLength(myArray);  i++){
         printText("Number: ", green);
-        printInt(numbers2[i], green);
-        printText("\n", green);
+        printInt(*(int *)(arrayGetItem(myArray, i)), green);
+        printChar('\n', green);
     }
     start_core1(core1_main);
     core0_main();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
