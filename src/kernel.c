@@ -8,12 +8,14 @@
 
 void core1_main(void)
 {
+    uart_init();
     clear_core1();
-    KeyboardInterruptionHandler();
+    KeyboardInterruptionHandler(uart_readchar);
 }
 
 void core0_main(void)
 {
+    initConsole();
     runConsole();
 
 //    uart_init();
@@ -26,7 +28,6 @@ void core0_main(void)
 
 void main()
 {
-    initConsole();
     start_core1(core1_main);
     core0_main();
 }

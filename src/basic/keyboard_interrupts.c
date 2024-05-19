@@ -1,16 +1,24 @@
-#include "../graphicInterface/framebuffer.h"
-#include "../Command-Line-Interface/console.h"
+#include "keyboard_interrupts.h"
+
+observerFunct currentObserverFunction;
 
 void onKeyPress(char key){
     processChar(key);
 }
 
 
-void KeyboardInterruptionHandler(){
+void KeyboardInterruptionHandler(char (*inputFunction)()){
     while (1){
-        wait_msec(1855);
-        onKeyPress('z');
-        onKeyPress('\n');
+        char test = inputFunction();
+        Notify(test);
     }
-
 }
+
+void Attach(observerFunct observer){
+    currentObserverFunction = observer;
+}
+
+void Notify(char interruptChart){
+    currentObserverFunction(interruptChart);
+}
+

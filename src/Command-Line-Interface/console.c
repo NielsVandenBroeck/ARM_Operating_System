@@ -4,6 +4,7 @@
 #include "console.h"
 #include "../Command-Line-Interface/Font.h"
 #include "../basic/multicore.h"
+#include "../basic/keyboard_interrupts.h"
 
 static int currentConsolePosition[]={XOFFSET,LINEHEIGHT+2};//x,y
 static int currentCursorPosition[]={XOFFSET,LINEHEIGHT+2};
@@ -14,6 +15,7 @@ void initConsole(){
     fb_init(1);
     setScaling(2);
     setRotation(0);
+    Attach(processChar);
 }
 
 void runConsole(){
