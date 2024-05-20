@@ -131,12 +131,7 @@ int getPixelColor(int x, int y){
 }
 
 void drawScreen(int color){
-
-    for(int x = 0; x < width; x++){
-        for(int y = 0; y < height; y++){
-            drawScaledPixels(x,y,color);
-        }
-    }
+    memset(fb, color, width*height*sizeof(void*));
 }
 
 void wait_msec(unsigned int n)

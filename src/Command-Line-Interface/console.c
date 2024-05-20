@@ -18,27 +18,34 @@ void initConsole(){
     //Make the frame buffer ready to use
     fb_init(1);
     setScaleSize(2);
-    setRotation(0);
+    setRotation(3);
     //Create the array buffer for the displayed text
-    textBuffer = newArray(1,sizeof (Array));
-    Array* consoleLine = newArray(0,sizeof (char));
-    *(Array*)arrayGetItem(textBuffer,0) = *consoleLine;
+
+//    textBuffer = newArray(1,sizeof (Array));
+//    Array* consoleLine = newArray(1,sizeof (char));
+//    *(Array*)arrayGetItem(textBuffer,0) = *consoleLine;
+
+    textBuffer = newArray(1, sizeof(Array*));
+    Array* consoleLine = newArray(1, sizeof(char));
+    *(Array**)arrayGetItem(textBuffer, 0) = consoleLine;
+
     Attach(processChar);
 }
 
 void runConsole(){
     int val = 0;
     while(1){
-        printText("core0: ", green);
-        printInt(val,green);
-        printChar('\n',green);
-        clearConsole();
-        if(val > 100){
-            drawFromBuffer(val-100);
-        }
-        else{
-            drawFromBuffer(0);
-        }
+        printText("core0: ",CURRENT_COLOR);
+        printInt(val,CURRENT_COLOR);
+        printChar('\n',CURRENT_COLOR);
+        wait_msec(500);
+//        clearConsole();
+//        if(val > 80){
+//            drawFromBuffer(val-80);
+//        }
+//        else{
+//            drawFromBuffer(0);
+//        }
         val++;
     }
     runCursor();
@@ -51,7 +58,7 @@ void processChar(char c){
 void nextLine(){
     currentConsolePosition[0] = XOFFSET;
     if(currentConsolePosition[1] >= getHeight()-LINEHEIGHT*5){
-        drawFromBuffer(0); //todo
+//        drawFromBuffer(0); //todo
     } else {
         currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
     }
@@ -64,7 +71,7 @@ char* readLine(){
 }
 
 void clearConsole(){
-    drawScreen(black);
+    drawScreen(red);
     currentConsolePosition[0] = 10;
     currentConsolePosition[1] = 10;
     currentCursorPosition[0] = 10;
@@ -107,14 +114,14 @@ void printChar(char c, int color){
         // end this console line and add a new one to textBuffer
         arrayAppend(textBuffer);
         Array* consoleLine = newArray(0,sizeof (char));
-        *(Array*)arrayGetItem(textBuffer,arrayGetLength(textBuffer)-1) = *consoleLine;
+        *(Array**)arrayGetItem(textBuffer,arrayGetLength(textBuffer)-1) = consoleLine;
     }
     else{
         // draw character on screen
         drawGlyph(c,color);
 
         // add character to the textBuffer
-        Array* currentLine = (Array*)arrayGetItem(textBuffer, arrayGetLength(textBuffer)-1);
+        Array* currentLine = *(Array**)arrayGetItem(textBuffer, arrayGetLength(textBuffer)-1);
         arrayAppend(currentLine);
         *(char *)arrayGetItem(currentLine,arrayGetLength(currentLine)-1) = c;
     }
@@ -168,14 +175,16 @@ void clearCursor(){
 
 void drawFromBuffer(int startLine){
     unsigned int length = arrayGetLength(textBuffer);
-    if(arrayGetLength(textBuffer) > (getHeight()-1)/10){
-        length = (getHeight()-1)/10;
+    if(arrayGetLength(textBuffer) > (getHeight()-1)/LINEHEIGHT){
+        length = (getHeight()-1)/LINEHEIGHT;
     }
     for(int i = startLine; i < length;  i++){
-        Array* consoleLine = (Array *)arrayGetItem(textBuffer,i);
+        Array* consoleLine = *(Array**)arrayGetItem(textBuffer,i);
         for(int j = 0; j < arrayGetLength(consoleLine);  j++){
-            drawGlyph(*(char *)(arrayGetItem(consoleLine, j)), blue);
+            drawGlyph(*(char *)(arrayGetItem(consoleLine, j)), CURRENT_COLOR);
         }
+        //do not print nextline because current console line is still active.
+        if(i == length-1) break;
         nextLine();
     }
 }
