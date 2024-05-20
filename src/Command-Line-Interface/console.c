@@ -15,8 +15,6 @@ int currentWindow = 0; //The line (index in textBuffer) that is shown first (on 
 Array* textBuffer;
 
 void initConsole(){
-    //Make the frame buffer ready to use
-    fb_init(1);
     setScaleSize(2);
     setRotation(0);
     //Create the array buffer for the displayed text
@@ -30,10 +28,10 @@ void initConsole(){
 void runConsole(){
     int val = 0;
     while(1){
-        printText("core0: \n",green);
+        printText("core0: ",green);
         printInt(val,CURRENT_COLOR);
+        wait_msec(1000);
         printChar('\n',CURRENT_COLOR);
-        wait_msec(500);
         val++;
         if(val == 10){
             rotateScreen(3);
@@ -42,11 +40,11 @@ void runConsole(){
             changeTextColor(blue);
         }
         if(val == 20){
-            scaleScreen(1);
+            //scaleScreen(1);
         }
         if(val == 30){
             rotateScreen(0);
-            scaleScreen(2);
+            //scaleScreen(2);
         }
     }
     runCursor();
@@ -114,7 +112,7 @@ void printChar(char c, int color){
         Character newCharacter = {c, color};
         *(Character *)arrayGetItem(currentLine,arrayGetLength(currentLine)-1) = newCharacter;
     }
-    //updateCursorPosition();
+    updateCursorPosition();
 }
 
 void drawGlyph(char c, int x, int y, int color){
@@ -162,6 +160,7 @@ void clearCursor(){
 }
 
 void clearConsole(){
+    clearCursor();
     int xOffset = XOFFSET;
     int yOffset = YOFFSET;
 
@@ -203,11 +202,17 @@ void drawFromBuffer(){
         currentConsolePosition[0] = XOFFSET;
         currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
     }
+    updateCursorPosition();
 }
 
 void rotateScreen(int rotation){
     clearConsole();
     setRotation(rotation);
+    //edit current window for resized height
+    int newWindow = arrayGetLength(textBuffer) - ((getHeight()/LINEHEIGHT)-2);
+    if(newWindow > 0){
+        currentWindow = newWindow;
+    }
     drawFromBuffer();
 }
 
