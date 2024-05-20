@@ -6,6 +6,7 @@
 #include "basic/multicore.h"
 #include "basic/keyboard_interrupts.h"
 #include "data_structures/array.h"
+#include "basic/malloc.h"
 
 void core1_main(void)
 {
@@ -27,25 +28,6 @@ void core0_main(void)
 void main()
 {
     initConsole();
-    //start_core1(core1_main);
-
-//    drawGlyph('h', green);
-//    Array* myUpperArray = newArray(1,sizeof (Array*));
-//    for(int k = 0; k<50;k++){
-//        Array* consoleLine = newArray(1, sizeof(int));
-//        arrayAppend(myUpperArray);
-//        *(Array**)arrayGetItem(myUpperArray, k) = consoleLine;
-//        for(int i = 0; i < 12; i++){
-//            arrayAppend(consoleLine);
-//            *(int *)arrayGetItem(consoleLine,i) = i;
-//        }
-//        drawGlyph('\n',green);
-//        for(int i = 0; i < arrayGetLength(myUpperArray);  i++){
-//            Array* childArray = (Array *)arrayGetItem(myUpperArray,i);
-//            for(int j = 0; j < arrayGetLength(childArray);  j++){
-//                drawGlyph(*(int *)(arrayGetItem(childArray, j)), green);
-//            }
-//        }
-//    }
+    start_core1(core1_main);
     core0_main();
 }

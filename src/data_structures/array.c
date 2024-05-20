@@ -6,20 +6,10 @@
 #include <stddef.h>
 
 Array* newArray(int length, int elmSize){
-    printInt(length * elmSize,red);
-    printChar(' ',green);
     void* firstItem = (char *)malloc(length * elmSize);
-    if(firstItem == NULL){
-        drawGlyph('z',red);
-    }
     Array createdArray = {length, elmSize, length-1, firstItem, NULL};
-    printInt(sizeof(Array),red);
     Array* arrayItem = (Array *)malloc(sizeof(Array));
-    if(arrayItem == NULL){
-        drawGlyph('z',red);
-    }
     arrayItem[0] = createdArray;
-    drawGlyph('a',blue);
     return arrayItem;
 }
 
@@ -72,7 +62,6 @@ void arrayAppend(Array* array){
     else{
         array->lastIndex+=1;
     }
-    drawGlyph('b',blue);
 };
 
 /**

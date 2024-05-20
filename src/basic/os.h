@@ -3,6 +3,8 @@
 
 #define MAX_TASKS 10
 #define STACK_SIZE 256
-#define MAX_HEAPS 966367641
+//close to 1GB: 805306368
+//1MB for testing: 1048576
+#define MAX_HEAPS 1048576
 
 #endif

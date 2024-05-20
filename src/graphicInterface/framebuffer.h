@@ -6,8 +6,6 @@ unsigned int getWidth();
 
 void setScaleSize(int size);
 
-int getScaleSize();
-
 void setRotation(int rotation);
 
 void drawScreen(int color);

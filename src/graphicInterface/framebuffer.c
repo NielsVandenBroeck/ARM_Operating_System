@@ -66,6 +66,12 @@ void fb_init()
         setRotation(0);
         fb = (unsigned char *)((long)mbox[28]);
     }
+
+//    //draw logo
+//    for(int i = 0; i < 1000; i++){
+//        drawPixel(i,i,red);
+//    }
+
 }
 
 unsigned int getHeight(){
@@ -82,10 +88,6 @@ void setScaleSize(int size){
     width /= size;
     height /= size;
     sizeScale = size;
-}
-
-int getScaleSize(){
-    return sizeScale;
 }
 
 void setRotation(int angle){
@@ -132,7 +134,15 @@ int getPixelColor(int x, int y){
 }
 
 void drawScreen(int color){
-    memset(fb, color, width*height*sizeof(void*));
+//    int* ptr = (int*)fb;
+//    for (size_t i = 0; i < mbox[10]*mbox[11]*sizeof(int); ++i) {
+//        ptr[i] = color;
+//    }
+    for(int y = 0; y < mbox[11]; y++){
+        for(int x = 0; x < mbox[10]; x++){
+            drawPixel(x,y,color);
+        }
+    }
 }
 
 void wait_msec(unsigned int n)

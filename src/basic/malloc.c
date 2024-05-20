@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include "malloc.h"
 #include "os.h"
+#include "error.h"
 
 //Temporarly used from https://github.com/jserv/mini-arm-os/tree/master
 
@@ -62,6 +63,7 @@ void *malloc(unsigned int nbytes)
         if (p == freep) {
             cp = sbrk(nunits * sizeof(Header));
             if (cp == (void *) -1) {
+                throw("Error while allocating memory. No more memory available.");
                 return NULL;
             } else {
                 p = (Header *) cp;
