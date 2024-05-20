@@ -67,9 +67,9 @@ void fb_init()
     }
 
     //draw logo
-    for(int i = 0; i < 1000; i++){
-        drawPixel(i,i,red);
-    }
+//    for(int i = 0; i < 1000; i++){
+//        drawPixel(i,i,red);
+//    }
 
 }
 
