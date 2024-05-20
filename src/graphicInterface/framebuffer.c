@@ -3,6 +3,7 @@
 #include "../basic/error.h"
 #include "../Command-Line-Interface/console.h"
 #include "framebuffer.h"
+#include <stddef.h>
 
 unsigned int width, height, pitch, isrgb, rotation;
 unsigned int sizeScale = 1;
@@ -230,4 +231,56 @@ void setInterfaceScaling(unsigned int scalingValue){
         }
     }
 
+}
+
+int uartDrawX = 0;
+int uartDrawY = 0;
+int colorCounter = 0;
+char* nextColor = NULL;
+int hex2int(char *hex) {
+    int val = 0;
+    while (*hex) {
+        // get current character then increment
+        int byte = *hex++;
+        // transform hex character to the 4bit equivalent number, using the ascii table indexes
+        if (byte >= '0' && byte <= '9') byte = byte - '0';
+        else if (byte >= 'a' && byte <='f') byte = byte - 'a' + 10;
+        else if (byte >= 'A' && byte <='F') byte = byte - 'A' + 10;
+        // shift 4 to make space for new digit, and add the 4 bits of the new digit
+        val = (val << 4) | (byte & 0xF);
+    }
+    return val;
+}
+
+void uartDraw(char c){
+    if(nextColor == NULL){
+        nextColor = (char *)malloc(8 * sizeof(char));
+    }
+    if(c == '>'){
+        colorCounter = 0;
+        uartDrawX += 1;
+    }
+    //next line
+    else if(c == '/'){
+        uartDrawY += 1;
+        uartDrawX = 0;
+    }
+    else if(c == '#'){
+       // printText(nextColor, hex2int(nextColor));
+       // printText("\n", green);
+        drawPixel(uartDrawX, uartDrawY + 40, hex2int(nextColor));
+    }
+    else if(c == '*'){
+        drawScreen(black);
+        uartDrawY = 0;
+        uartDrawX = 0;
+        nextColor = (char *)malloc(8 * sizeof(char));
+    }
+    else{
+        if(colorCounter > 8){
+            colorCounter = 0;
+        }
+        nextColor[colorCounter] = c;
+        colorCounter++;
+    }
 }

@@ -28,7 +28,7 @@ void colorTest();
 
 void colorTest2();
 
-
+void uartDraw(char c);
 
 //default colors
 enum {
