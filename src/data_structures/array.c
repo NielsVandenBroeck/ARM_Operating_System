@@ -13,6 +13,7 @@ Array* newArray(int length, int elmSize){
     return arrayItem;
 }
 
+//TODO delete array item
 void arrayDelete(Array* array){
     if(array == NULL){
         return;
@@ -75,26 +76,3 @@ int arrayGetLength(Array* array){
     }
     return array->lastIndex+1 + arrayGetLength(array->nextArray);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

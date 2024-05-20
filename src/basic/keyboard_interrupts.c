@@ -1,24 +1,41 @@
 #include "keyboard_interrupts.h"
+#include "../data_structures/queue.h"
+#include "../uart/uart.h"
+#include <stddef.h>
 
-observerFunct currentObserverFunction;
+observerFunct currentObserverFunction = NULL;
+static Queue* charQueue;
 
-void onKeyPress(char key){
-    processChar(key);
+void KeyboardInterruptionInit(){
+    charQueue = newQueue(sizeof(char));
 }
 
+char bufferChar(char interruptChart){
+    queuePush(charQueue, interruptChart);
+}
 
 void KeyboardInterruptionHandler(char (*inputFunction)()){
     while (1){
-        char test = inputFunction();
-        Notify(test);
+        char newChar = inputFunction();
+        keyboardInterruptionNotify(newChar);
     }
 }
 
-void Attach(observerFunct observer){
+void keyboardInterruptionAttach(observerFunct observer){
     currentObserverFunction = observer;
 }
 
-void Notify(char interruptChart){
-    currentObserverFunction(interruptChart);
+void keyboardInterruptionNotify(char interruptChart){
+    if(currentObserverFunction == NULL){
+        bufferChar(interruptChart);
+    } else{
+        currentObserverFunction(interruptChart);
+    }
 }
 
+char* keyboardInterruptionGetChar(){
+    if(queueGetLenght(charQueue) > 0){
+        return (char*)queuePop(charQueue);
+    }
+    return NULL;
+}

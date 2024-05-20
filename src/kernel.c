@@ -8,6 +8,7 @@ void core1_main(void)
 {
     uart_init();
     clear_core1();
+    KeyboardInterruptionInit();
     KeyboardInterruptionHandler(uart_readchar);
 }
 
@@ -24,8 +25,11 @@ void core0_main(void)
 void main()
 {
     //Make the frame buffer ready to use
-    fb_init(1);
+    fb_init();
     initConsole();
+
+    printText("hello world\n", green);
+
     start_core1(core1_main);
     core0_main();
 }

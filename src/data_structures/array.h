@@ -14,4 +14,5 @@ Array* ArrayConcat(Array* array1, Array* array2);
 void* arrayGetItem(Array* array, int i);
 void arrayAppend(Array* array);
 int arrayGetLength(Array* array);
-void Simplify();
+void arraySimplify();
+void arrayShift(Array* array);

@@ -6,6 +6,8 @@
 #include "../basic/multicore.h"
 #include "../basic/keyboard_interrupts.h"
 #include "../data_structures/array.h"
+#include "../uart/uart.h"
+#include <stddef.h>
 
 static int currentConsolePosition[]={XOFFSET,YOFFSET};//x,y
 static int currentCursorPosition[]={XOFFSET,YOFFSET};
@@ -22,13 +24,15 @@ void initConsole(){
     Array* consoleLine = newArray(0, sizeof(Character));
     *(Array**)arrayGetItem(textBuffer, 0) = consoleLine;
 
-    Attach(processChar);
+    //Attach(processChar); not needed will self check in runConsole, to limit load on input core
 }
 
 void runConsole(){
-    int val = 0;
+    int cursorCounter = 0;
+    uart_print("runConsole\n");
     while(1){
-        printText("core0: ",green);
+        /*
+        printText("core0: \n",green);
         printInt(val,CURRENT_COLOR);
         wait_msec(1000);
         printChar('\n',CURRENT_COLOR);
@@ -44,14 +48,27 @@ void runConsole(){
         }
         if(val == 30){
             rotateScreen(0);
-            //scaleScreen(2);
+            scaleScreen(2);
+        }*/
+        char* inputChar = keyboardInterruptionGetChar();
+        while (inputChar != NULL){
+            processChar(*inputChar);
+            inputChar = keyboardInterruptionGetChar();
         }
+        cursorCounter++;
+        if(cursorCounter == 10){
+            drawCursor();
+        }
+        else if(cursorCounter == 20){
+            clearCursor();
+            cursorCounter = 0;
+        }
+        wait_msec(50);
     }
-    runCursor();
 }
 
 void processChar(char c){
-    //printChar(c,CURRENT_COLOR);
+    printChar(c,CURRENT_COLOR);
 }
 
 char* readLine(){
@@ -103,6 +120,10 @@ void printChar(char c, int color){
     }
     else{
         // draw character on screen
+        if(currentConsolePosition[0] > getWidth()){
+            currentConsolePosition[1] += LINEHEIGHT;
+            currentConsolePosition[0] = XOFFSET;
+        }
         drawGlyph(c,currentConsolePosition[0],currentConsolePosition[1],color);
         currentConsolePosition[0] += FONT_WIDTH; //position for next character
 
