@@ -19,9 +19,9 @@ void runConsole();
 
 void processChar(char c);
 
-char* readLine();
+void handleCommand();
 
-void updateCursorPosition();
+char* readLine();
 
 void runCursor();
 

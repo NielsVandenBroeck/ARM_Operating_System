@@ -62,9 +62,6 @@ void main()
     fb_init();
     initConsole();
     uart_init();
-
-    printText("hello world\n", green);
-
     start_core1(core1_main);
     core0_main();
 }

@@ -9,50 +9,40 @@
 #include "../uart/uart.h"
 #include <stddef.h>
 
-static int currentConsolePosition[]={XOFFSET,YOFFSET};//x,y
-static int currentCursorPosition[]={XOFFSET,YOFFSET};
-static int CURRENT_COLOR = red;
-int currentWindow = 0; //The line (index in textBuffer) that is shown first (on top) of the screen
+//variables related to pixels and positions
+static int currentConsolePosition[]={XOFFSET,YOFFSET}; //The position to draw the next character
+static int CURRENT_COLOR = red; //The color of the text to be drawn
 
-Array* textBuffer;
+//variables related to texbuffer
+Array* textBuffer; //Array of arrays of Characters for buffering the text shown on screen
+Array* currentLine; //latest line (stored for easier access)
+static int currentWindowIndex = 0; //The line (index in textBuffer) that is shown first (on top) of the screen
+static int cursorIndex = 0; //index in the currentLine where the cursor is positioned
+static int inputStartIndex = 0; //index in the current line that indicates the start of the user input
 
 void initConsole(){
     setScaleSize(2);
     setRotation(0);
     //Create the array buffer for the displayed text
     textBuffer = newArray(1, sizeof(Array*));
-    Array* consoleLine = newArray(0, sizeof(Character));
-    *(Array**)arrayGetItem(textBuffer, 0) = consoleLine;
+    currentLine = newArray(0, sizeof(Character));
+    *(Array**)arrayGetItem(textBuffer, 0) = currentLine;
 
     //keyboardInterruptionAttach(processChar); //not needed will self check in runConsole, to limit load on input core
 }
 
 void runConsole(){
+    printText("user@Ubutnu:/home$", green);
+    inputStartIndex = 18;
+
     int cursorCounter = 0;
     uart_print("runConsole\n");
     while(1){
-        /*
-        printText("core0: \n",green);
-        printInt(val,CURRENT_COLOR);
-        wait_msec(1000);
-        printChar('\n',CURRENT_COLOR);
-        val++;
-        if(val == 10){
-            rotateScreen(3);
-        }
-        if(val == 15){
-            changeTextColor(blue);
-        }
-        if(val == 20){
-            //scaleScreen(1);
-        }
-        if(val == 30){
-            rotateScreen(0);
-            scaleScreen(2);
-        }*/
         char* inputChar = keyboardInterruptionGetChar();
         while (inputChar != NULL){
+            clearCursor();
             processChar(*inputChar);
+            drawCursor();
             inputChar = keyboardInterruptionGetChar();
         }
         cursorCounter++;
@@ -68,7 +58,60 @@ void runConsole(){
 }
 
 void processChar(char c){
-    printChar(c,CURRENT_COLOR);
+    //special cases
+    if(c == '\n'){
+        if(currentConsolePosition[1] >= getHeight()-LINEHEIGHT*2){
+            clearConsole();
+            currentWindowIndex += 1;
+            currentConsolePosition[0] = XOFFSET;
+            drawFromBuffer();
+        }
+        else{
+            currentConsolePosition[0] = XOFFSET;
+            currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
+        }
+
+        // end this console line and add a new one to textBuffer
+        arrayAppend(textBuffer);
+        currentLine = newArray(0,sizeof (Character));
+        *(Array**)arrayGetItem(textBuffer,arrayGetLength(textBuffer)-1) = currentLine;
+    }
+    else if(c == '\b'){
+        //remove previous character
+        if(cursorIndex != inputStartIndex){
+            clearConsole();
+            arrayRemoveItem(currentLine, cursorIndex-1);
+            currentConsolePosition[0] -= FONT_WIDTH;
+            cursorIndex--;
+            drawFromBuffer();
+        }
+    }
+    else if(c == 'a'){
+        //go left (cursor)
+        if(cursorIndex > inputStartIndex){
+            currentConsolePosition[0] -= FONT_WIDTH;
+            cursorIndex--;
+        }
+    }
+    else if(c == 'z'){
+        if(cursorIndex < arrayGetLength(currentLine)){
+            currentConsolePosition[0] += FONT_WIDTH;
+            cursorIndex++;
+        }
+    }
+    else if(c == 'e'){
+        rotateScreen(3);
+    }
+    else if(c == 'r'){
+        rotateScreen(0);
+    }
+    else{
+        printChar(c,CURRENT_COLOR);
+    }
+}
+
+void handleCommand(){
+
 }
 
 char* readLine(){
@@ -102,47 +145,27 @@ void printInt(unsigned int number, int color){
 }
 
 void printChar(char c, int color){
-    //todo \r, \t, ...
-    if(c == '\n') {
-        // end this console line and add a new one to textBuffer
-        arrayAppend(textBuffer);
-        Array* consoleLine = newArray(0,sizeof (Character));
-        *(Array**)arrayGetItem(textBuffer,arrayGetLength(textBuffer)-1) = consoleLine;
-        if(currentConsolePosition[1] >= getHeight()-LINEHEIGHT*2){
-            clearConsole();
-            currentWindow += 1;
-            drawFromBuffer();
-        }
-        else{
-            currentConsolePosition[0] = XOFFSET;
-            currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
-        }
+    //todo \n should still work here if done in printText()
+    //Check if user exceeds screenwidth when does go to next line
+    if(currentConsolePosition[0] > getWidth() - XOFFSET){
+        currentConsolePosition[1] += LINEHEIGHT;
+        currentConsolePosition[0] = XOFFSET;
     }
-    else{
-        // draw character on screen
+    drawGlyph(c,currentConsolePosition[0],currentConsolePosition[1],color);
+    currentConsolePosition[0] += FONT_WIDTH; //position for next character
 
-        //Check if user exceeds screenwidth when does go to next line
-        if(currentConsolePosition[0] > getWidth() - XOFFSET){
-            currentConsolePosition[1] += LINEHEIGHT;
-            currentConsolePosition[0] = XOFFSET;
-        }
-        drawGlyph(c,currentConsolePosition[0],currentConsolePosition[1],color);
-        currentConsolePosition[0] += FONT_WIDTH; //position for next character
+    // add character to the textBuffer
+    arrayAppend(currentLine);
+    Character newCharacter = {c, color};
+    *(Character *)arrayGetItem(currentLine,arrayGetLength(currentLine)-1) = newCharacter;
 
-        // add character to the textBuffer
-        Array* currentLine = *(Array**)arrayGetItem(textBuffer, arrayGetLength(textBuffer)-1);
-        arrayAppend(currentLine);
-        Character newCharacter = {c, color};
-        *(Character *)arrayGetItem(currentLine,arrayGetLength(currentLine)-1) = newCharacter;
-
-        if(currentConsolePosition[1] - LINEHEIGHT >= getHeight()-LINEHEIGHT*2){
-            currentConsolePosition[1] -= LINEHEIGHT;
-            clearConsole();
-            currentWindow += 1;
-            drawFromBuffer();
-        }
+    if(currentConsolePosition[1] - LINEHEIGHT >= getHeight()-LINEHEIGHT*2){
+        currentConsolePosition[1] -= LINEHEIGHT;
+        clearConsole();
+        currentWindowIndex += 1;
+        drawFromBuffer();
     }
-    updateCursorPosition();
+    cursorIndex++;
 }
 
 void drawGlyph(char c, int x, int y, int color){
@@ -161,44 +184,27 @@ void drawGlyph(char c, int x, int y, int color){
     }
 }
 
-void updateCursorPosition(){
-    clearCursor();
-    currentCursorPosition[0] = currentConsolePosition[0];
-    currentCursorPosition[1] = currentConsolePosition[1];
-    drawCursor();
-}
-
-void runCursor(){
-    while(1){
-        drawCursor();
-        wait_msec(500);
-        clearCursor();
-        wait_msec(500);
-    }
-}
-
 void drawCursor(){
     for (int i=-2;i<LINEHEIGHT;i++) {
-        drawScaledPixels(currentCursorPosition[0]-1, currentCursorPosition[1]+i, CURRENT_COLOR);
+        drawScaledPixels(currentConsolePosition[0]-1, currentConsolePosition[1]+i, CURRENT_COLOR);
     }
 }
 
 void clearCursor(){
     for (int i=-2;i<LINEHEIGHT;i++) {
-        drawScaledPixels(currentCursorPosition[0]-1, currentCursorPosition[1]+i, black);
+        drawScaledPixels(currentConsolePosition[0]-1,  currentConsolePosition[1]+i, black);
     }
 }
 
 void clearConsole(){
-    clearCursor();
     int xOffset = XOFFSET;
     int yOffset = YOFFSET;
 
     unsigned int length = arrayGetLength(textBuffer);
-    if(length > (getHeight()/LINEHEIGHT)-2+currentWindow){
-        length = (getHeight()/LINEHEIGHT)-2+currentWindow;
+    if(length > (getHeight()/LINEHEIGHT)-2+currentWindowIndex){
+        length = (getHeight()/LINEHEIGHT)-2+currentWindowIndex;
     }
-    for(int i = currentWindow; i < length;  i++){
+    for(int i = currentWindowIndex; i < length;  i++){
         Array* consoleLine = *(Array**)arrayGetItem(textBuffer,i);
         for(int j = 0; j < arrayGetLength(consoleLine);  j++){
             //Check if user exceeds screenwidth when does go to next line
@@ -211,38 +217,47 @@ void clearConsole(){
             drawGlyph(c.value, xOffset, yOffset, black);
             xOffset += FONT_WIDTH; //position for next character
         }
-        //do not print nextline because current console line is still active.
-        if(i == length-1) break;
         xOffset = XOFFSET;
         yOffset += LINEHEIGHT; //on \n, start on new line below
     }
-
-    currentConsolePosition[0] = XOFFSET;
-    currentConsolePosition[1] = YOFFSET;
 }
 
 void drawFromBuffer(){
     unsigned int length = arrayGetLength(textBuffer);
-    if(length > (getHeight()/LINEHEIGHT)-2+currentWindow){
-        length = (getHeight()/LINEHEIGHT)-2+currentWindow;
+    int xOffset = XOFFSET;
+    int yOffset = YOFFSET;
+    if(length > (getHeight()/LINEHEIGHT)-2+currentWindowIndex){
+        length = (getHeight()/LINEHEIGHT)-2+currentWindowIndex;
     }
-    for(int i = currentWindow; i < length;  i++){
+    //draw all lines except for the last one
+    for(int i = currentWindowIndex; i < length-1;  i++){
         Array* consoleLine = *(Array**)arrayGetItem(textBuffer,i);
         for(int j = 0; j < arrayGetLength(consoleLine);  j++){
-            if(currentConsolePosition[0] > getWidth() - XOFFSET){
-                currentConsolePosition[1] += LINEHEIGHT;
-                currentConsolePosition[0] = XOFFSET;
+            if(xOffset > getWidth() - XOFFSET){
+                yOffset += LINEHEIGHT;
+                xOffset = XOFFSET;
             }
             Character c = *(Character *)(arrayGetItem(consoleLine, j));
-            drawGlyph(c.value, currentConsolePosition[0], currentConsolePosition[1], c.color);
-            currentConsolePosition[0] += FONT_WIDTH; //position for next character
+            drawGlyph(c.value, xOffset, yOffset, c.color);
+            xOffset += FONT_WIDTH; //position for next character
         }
-        //do not print nextline because current console line is still active.
-        if(i == length-1) break;
-        currentConsolePosition[0] = XOFFSET;
-        currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
+        xOffset = XOFFSET;
+        yOffset += LINEHEIGHT; //on \n, start on new line below
     }
-    updateCursorPosition();
+    //last line is kinda special, so do this appart
+    for(int j = 0; j < arrayGetLength(currentLine);  j++){
+        if(j == cursorIndex){
+            currentConsolePosition[0] = xOffset;
+            currentConsolePosition[1] = yOffset;
+        }
+        if(xOffset > getWidth() - XOFFSET){
+            yOffset += LINEHEIGHT;
+            xOffset = XOFFSET;
+        }
+        Character c = *(Character *)(arrayGetItem(currentLine, j));
+        drawGlyph(c.value, xOffset, yOffset, c.color);
+        xOffset += FONT_WIDTH; //position for next character
+    }
 }
 
 void rotateScreen(int rotation){
@@ -251,7 +266,7 @@ void rotateScreen(int rotation){
     //edit current window for resized height
     int newWindow = arrayGetLength(textBuffer) - ((getHeight()/LINEHEIGHT)-2);
     if(newWindow > 0){
-        currentWindow = newWindow;
+        currentWindowIndex = newWindow;
     }
     drawFromBuffer();
 }
