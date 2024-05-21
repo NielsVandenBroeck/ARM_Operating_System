@@ -5,6 +5,8 @@ void uart_print(char *outputString);
 
 void uart_printc(char c);
 
+void uart_printInt(unsigned int number);
+
 char* uart_readline();
 
 char* uart_readchar();

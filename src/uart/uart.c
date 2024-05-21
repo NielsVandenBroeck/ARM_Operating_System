@@ -143,3 +143,20 @@ char uart_readchar(){
     }
     return input;
 }
+
+void uart_printInt(unsigned int number){
+    unsigned int tempNumber = number;
+    int devider = 1;
+    while(tempNumber > 9){
+        tempNumber = (int)(tempNumber / 10);
+        devider *= 10;
+    }
+
+    while(devider >= 1){
+        unsigned int digitNumber = (unsigned int)(number / devider);
+        char asChar = digitNumber + '0';
+        uart_printc(asChar);
+        number -= digitNumber * devider;
+        devider = (int)(devider / 10);
+    }
+}

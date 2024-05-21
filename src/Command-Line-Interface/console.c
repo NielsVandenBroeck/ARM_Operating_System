@@ -24,7 +24,7 @@ void initConsole(){
     Array* consoleLine = newArray(0, sizeof(Character));
     *(Array**)arrayGetItem(textBuffer, 0) = consoleLine;
 
-    //Attach(processChar); not needed will self check in runConsole, to limit load on input core
+    //keyboardInterruptionAttach(processChar); //not needed will self check in runConsole, to limit load on input core
 }
 
 void runConsole(){
