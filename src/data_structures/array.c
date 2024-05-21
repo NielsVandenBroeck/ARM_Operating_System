@@ -36,6 +36,7 @@ Array* ArrayConcat(Array* array1, Array* array2){
 
 void* arrayGetItem(Array* array, int i){
     if(array == NULL){
+        throw("Index out of array");
         return 0;
     }
     if(i > array->lastIndex){

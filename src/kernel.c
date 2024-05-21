@@ -27,6 +27,7 @@ void main()
     //Make the frame buffer ready to use
     fb_init();
     initConsole();
+    uart_init();
 
     printText("hello world\n", green);
 

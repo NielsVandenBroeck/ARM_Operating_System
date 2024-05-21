@@ -102,6 +102,7 @@ void printInt(unsigned int number, int color){
 }
 
 void printChar(char c, int color){
+    uart_print("TEST 0\n");
     //todo \r, \t, ...
     if(c == '\n') {
         // end this console line and add a new one to textBuffer
@@ -120,7 +121,9 @@ void printChar(char c, int color){
     }
     else{
         // draw character on screen
-        if(currentConsolePosition[0] > getWidth()){
+
+        //Check if user exceeds screenwidth when does go to next line
+        if(currentConsolePosition[0] > getWidth() - XOFFSET){
             currentConsolePosition[1] += LINEHEIGHT;
             currentConsolePosition[0] = XOFFSET;
         }
@@ -132,8 +135,21 @@ void printChar(char c, int color){
         arrayAppend(currentLine);
         Character newCharacter = {c, color};
         *(Character *)arrayGetItem(currentLine,arrayGetLength(currentLine)-1) = newCharacter;
+
+        if(currentConsolePosition[1] - LINEHEIGHT >= getHeight()-LINEHEIGHT*2){
+            currentConsolePosition[1] -= LINEHEIGHT;
+            uart_print("TEST 1\n");
+            clearConsole();
+            uart_print("TEST 2\n");
+            currentWindow += 1;
+            uart_print("TEST 3\n");
+            drawFromBuffer();
+            uart_print("TEST 4\n");
+        }
     }
+    uart_print("TEST 5\n");
     updateCursorPosition();
+    uart_print("TEST 6\n");
 }
 
 void drawGlyph(char c, int x, int y, int color){
@@ -186,12 +202,18 @@ void clearConsole(){
     int yOffset = YOFFSET;
 
     unsigned int length = arrayGetLength(textBuffer);
-    if(length > (getHeight()/LINEHEIGHT)-2){
+    if(length > (getHeight()/LINEHEIGHT)-2+currentWindow){
         length = (getHeight()/LINEHEIGHT)-2+currentWindow;
     }
     for(int i = currentWindow; i < length;  i++){
         Array* consoleLine = *(Array**)arrayGetItem(textBuffer,i);
         for(int j = 0; j < arrayGetLength(consoleLine);  j++){
+            //Check if user exceeds screenwidth when does go to next line
+            if(xOffset > getWidth() - XOFFSET){
+                yOffset += LINEHEIGHT;
+                xOffset = XOFFSET;
+            }
+
             Character c = *(Character *)(arrayGetItem(consoleLine, j));
             drawGlyph(c.value, xOffset, yOffset, black);
             xOffset += FONT_WIDTH; //position for next character
@@ -207,13 +229,19 @@ void clearConsole(){
 }
 
 void drawFromBuffer(){
+    uart_print("TEST 7\n");
     unsigned int length = arrayGetLength(textBuffer);
-    if(length > (getHeight()/LINEHEIGHT)-2){
+    if(length > (getHeight()/LINEHEIGHT)-2+currentWindow){
         length = (getHeight()/LINEHEIGHT)-2+currentWindow;
     }
+    uart_print("TEST 8\n");
     for(int i = currentWindow; i < length;  i++){
         Array* consoleLine = *(Array**)arrayGetItem(textBuffer,i);
         for(int j = 0; j < arrayGetLength(consoleLine);  j++){
+            if(currentConsolePosition[0] > getWidth() - XOFFSET){
+                currentConsolePosition[1] += LINEHEIGHT;
+                currentConsolePosition[0] = XOFFSET;
+            }
             Character c = *(Character *)(arrayGetItem(consoleLine, j));
             drawGlyph(c.value, currentConsolePosition[0], currentConsolePosition[1], c.color);
             currentConsolePosition[0] += FONT_WIDTH; //position for next character
@@ -223,7 +251,9 @@ void drawFromBuffer(){
         currentConsolePosition[0] = XOFFSET;
         currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
     }
+    uart_print("TEST 9\n");
     updateCursorPosition();
+    uart_print("TEST 10\n");
 }
 
 void rotateScreen(int rotation){
