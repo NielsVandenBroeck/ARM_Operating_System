@@ -36,7 +36,7 @@ Array* ArrayConcat(Array* array1, Array* array2){
 
 void* arrayGetItem(Array* array, int i){
     if(array == NULL){
-        throw("Index out of array");
+        throw("Index out of range");
         return 0;
     }
     if(i > array->lastIndex){
@@ -45,6 +45,35 @@ void* arrayGetItem(Array* array, int i){
     return array->firstItem + array->elmSize * i;
 }
 
+void* arrayRemoveItem(Array* array, int i){
+    if(array == NULL || i < 0){
+        throw("Index out of range");
+        return 0;
+    }
+    if(i > array->lastIndex){
+        return arrayRemoveItem(array->nextArray, i - array->lastIndex - 1);
+    }
+
+    // Remove the item at index i
+    char* base = (char*)array->firstItem;
+    void* src = base + (i + 1) * array->elmSize;
+    void* dest = base + i * array->elmSize;
+    unsigned int bytes_to_move = (array->lastIndex - i) * array->elmSize;
+    memMove(dest, src, bytes_to_move);
+    array->lastIndex--;
+}
+
+void* arrayInsertItem(Array* array, int i, void* item){
+    if(array == NULL){
+        throw("Index out of range");
+        return 0;
+    }
+    if(i > array->lastIndex){
+        return arrayInsertItem(array->nextArray, i - array->lastIndex - 1, item);
+    }
+    // Insert the item at index i
+    //TODO
+}
 
 /**
  * Add one memory space to the array
