@@ -17,21 +17,17 @@ union header {
 
 typedef union header Header;
 
-static unsigned char heaps[MAX_HEAPS];
-static unsigned char *program_break = heaps;
+//  0 - 73741824 bytes size assigned for TEXT and DATA, HEAP STARTS at adress 73741824
+static unsigned long program_break = 73741824;
 
 static Header base; /* empty list to get started */
 static Header *freep = NULL; /* start of free list */
 
 static void *sbrk(unsigned int nbytes)
 {
-    if (program_break + nbytes >= heaps
-        && program_break + nbytes < heaps + MAX_HEAPS) {
-        unsigned char *previous_pb = program_break;
-        program_break += nbytes;
-        return (void *) previous_pb;
-    }
-    return (void *) -1;
+    unsigned char *previous_pb = program_break;
+    program_break += nbytes;
+    return (void *) previous_pb;
 }
 
 void *malloc(unsigned int nbytes)
