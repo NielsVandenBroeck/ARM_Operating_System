@@ -84,9 +84,9 @@ void processChar(char c){
         cursorIndex = 0;
         inputStartIndex = 0;
         // end this console line and add a new one to textBuffer
-        arrayAppend(textBuffer);
         currentLine = newArray(0,sizeof (Character));
-        *(Array**)arrayGetItem(textBuffer,arrayGetLength(textBuffer)-1) = currentLine;
+        arrayAppendItem(textBuffer, currentLine);
+        //*(Array**)arrayGetItem(textBuffer,arrayGetLength(textBuffer)-1) = currentLine;
     }
     else if(c == '\b'){
         //remove previous character
@@ -124,7 +124,9 @@ void processChar(char c){
             printChar(c,CURRENT_COLOR);
             drawFromBuffer();
         }
-        printChar(c,CURRENT_COLOR);
+        else{
+            printChar(c,CURRENT_COLOR);
+        }
     }
 }
 
@@ -174,11 +176,11 @@ void printChar(char c, int color){
     // add character to the textBuffer
     Character newCharacter = {c, color};
     if(cursorIndex < arrayGetLength(currentLine)){
-        arrayInsertItem(currentLine, cursorIndex, newCharacter);
+        arrayInsertItem(currentLine, cursorIndex, &newCharacter);
     }
     else{
-        arrayAppend(currentLine);
-        *(Character *)arrayGetItem(currentLine,arrayGetLength(currentLine)-1) = newCharacter;
+        arrayAppendItem(currentLine, &newCharacter);
+
     }
 
     if(currentConsolePosition[1] - LINEHEIGHT >= getHeight()-LINEHEIGHT*2){

@@ -53,8 +53,8 @@ void queuePush(Queue* queue, void* item){
         throw("Queue does not contain an array");
         return NULL;
     }
-    arrayAppend(queue->array);
-    *(char*)arrayGetItem(queue->array, arrayGetLength(queue->array) - 1) = item;
+    arrayAppendItem(queue->array, &item);
+    //*(char*)arrayGetItem(queue->array, arrayGetLength(queue->array) - 1) = item;
 }
 
 int queueGetLenght(Queue* queue){

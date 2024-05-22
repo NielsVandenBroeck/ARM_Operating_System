@@ -6,11 +6,13 @@
 #include <stddef.h>
 
 Array* newArray(int length, int elmSize){
-    void* firstItem = (char *)malloc(length * elmSize);
+    void* firstItem = (void*)malloc(length * elmSize);
     Array createdArray = {length, elmSize, length-1, firstItem, NULL};
     Array* arrayItem = (Array *)malloc(sizeof(Array));
     arrayItem[0] = createdArray;
     return arrayItem;
+
+
 }
 
 //TODO delete array item
@@ -45,6 +47,7 @@ void* arrayGetItem(Array* array, int i){
     return array->firstItem + array->elmSize * i;
 }
 
+//todo remove array if 1 item
 void* arrayRemoveItem(Array* array, int i){
     if(array == NULL || i < 0){
         throw("Index out of range");
@@ -55,7 +58,7 @@ void* arrayRemoveItem(Array* array, int i){
     }
 
     // Remove the item at index i
-    char* base = (char*)array->firstItem;
+    void* base = array->firstItem;
     void* src = base + (i + 1) * array->elmSize;
     void* dest = base + i * array->elmSize;
     unsigned int bytes_to_move = (array->lastIndex - i) * array->elmSize;
@@ -63,7 +66,7 @@ void* arrayRemoveItem(Array* array, int i){
     array->lastIndex--;
 }
 
-void* arrayInsertItem(Array* array, int i, Character item){
+void* arrayInsertItem(Array* array, int i, void* item){
     if(array == NULL || i < 0){
         throw("Index out of range");
         return 0;
@@ -73,24 +76,28 @@ void* arrayInsertItem(Array* array, int i, Character item){
     }
     //room to just move all other elements by 1 and insert item at index
     else if(array->lastIndex < array->elmCount-1){
-        char* base = (Character*)array->firstItem;
+        void* base = array->firstItem;
         void* src = base + i * array->elmSize;
-        void* dest = base + i+1 * array->elmSize;
+        void* dest = base + (i+1) * array->elmSize;
         unsigned int bytes_to_move = (array->lastIndex - i+1) * array->elmSize;
         memMove(dest, src, bytes_to_move);
-        *(Character*)arrayGetItem(array, i) = item;
+        //put item at right location (src)
+        memMove(src,item, array->elmSize);
         array->lastIndex++;
     }
     //no room so make new array
     else{
+        //todo edge case if array has length 1
         Array* newItemArray = newArray(1, array->elmSize);
-        *(Character*)arrayGetItem(newItemArray, 0) = item;
+        //put item in address of firstitem of the array
+        memMove(newItemArray->firstItem,item, array->elmSize);
         //split original array in 2 so newItemArray get get in between them.
         Array* secondArray = newArray(array->lastIndex - i+1, array->elmSize);
-        void* src = (Character*)array->firstItem + (i * array->elmSize);
-        void* dest =  (Character*)secondArray->firstItem;
+        void* src = array->firstItem + (i * array->elmSize);
+        void* dest =  secondArray->firstItem;
         unsigned int bytes_to_move = (array->lastIndex - i+1) * array->elmSize;
-        //todo original array should be shortened? idk how that works with the free()
+        memMove(dest, src, bytes_to_move);
+
         array->lastIndex = i-1;
         //link all arrays together so they become one array
         newItemArray->nextArray = secondArray;
@@ -102,21 +109,24 @@ void* arrayInsertItem(Array* array, int i, Character item){
 }
 
 /**
- * Add one memory space to the array
+ * Add one memory space to the array and place item in it.
  * @param array
  */
-void arrayAppend(Array* array){
+void arrayAppendItem(Array* array, void* item){
     /**
      * Implemented by allocating 10 items on stack, or when there is space available moving the lastindex
      */
     if(array->nextArray != NULL){
-        arrayAppend(array->nextArray);
+        arrayAppendItem(array->nextArray, item);
     }
     else if(array->lastIndex >= array->elmCount - 1){
         array->nextArray = newArray(10, array->elmSize);
         array->nextArray->lastIndex = 0;
+        arrayAppendItem(array->nextArray, item);
     }
     else{
+        void* dest = array->firstItem + ((array->lastIndex+1) * array->elmSize);
+        memMove(dest, item, array->elmSize);
         array->lastIndex++;
     }
 };
