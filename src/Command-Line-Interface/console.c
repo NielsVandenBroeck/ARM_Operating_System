@@ -28,6 +28,16 @@ void initConsole(){
     currentLine = newArray(0, sizeof(Character));
     *(Array**)arrayGetItem(textBuffer, 0) = currentLine;
 
+//    printText("                 _   _   _                _                        _                                    -\n", green);
+//    printText("                | | | | | |__    _   _   | |_    _ __    _   _    | |                                   -\n", green);
+//    printText("                | | | | | '_ \\  | | | |  | __|  | '_ \\  | | | |   | |                    O O O o        -\n", green);
+//    printText("                | |_| | | |_) | | |_| |  | |_   | | | | | |_| |   |_|                            o      -\n", green);
+//    printText("                 \\___/  |_.__/   \\__,_|   \\__|  |_| |_|  \\__,_|   (_)                    ____      o    -\n", green);
+//    printText("|\"\"\"\"\"| |\"\"\"\"\"| |\"\"\"\"\"| |\"\"\"\"\"| |\"\"\"\"\"| |\"\"\"\"\"| |\"\"\"\"\"| |\"\"\"\"\"| |\"\"\"\"\"| |\"\"\"\"\"| |\"\"\"\"\"|  ][]]_n__][.    -\n", green);
+//    printText("|     |_|     |_|     |_|     |_|     |_|     |_|     |_|     |_|     |_|     |_|     |__|_________)<   -\n", green);
+//    printText("`-o-o-' `-o-o-' `-o-o-' `-o-o-' `-o-o-' `-o-o-' `-o-o-' `-o-o-' `-o-o-' `-o-o-' `-o-o-' oo 0000000 oo\\_ -\n", green);
+//    printText("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\n", green);
+//    return;
     //keyboardInterruptionAttach(processChar); //not needed will self check in runConsole, to limit load on input core
 
 }
@@ -110,8 +120,9 @@ void processChar(char c){
     else{
         //check if cursor is not at the end
         if(cursorIndex < arrayGetLength(currentLine)){
-            currentConsolePosition[0] += FONT_WIDTH;
-            cursorIndex++;
+            clearConsole();
+            printChar(c,CURRENT_COLOR);
+            drawFromBuffer();
         }
         printChar(c,CURRENT_COLOR);
     }
@@ -161,9 +172,14 @@ void printChar(char c, int color){
     currentConsolePosition[0] += FONT_WIDTH; //position for next character
 
     // add character to the textBuffer
-    arrayAppend(currentLine);
     Character newCharacter = {c, color};
-    *(Character *)arrayGetItem(currentLine,arrayGetLength(currentLine)-1) = newCharacter;
+    if(cursorIndex < arrayGetLength(currentLine)){
+        arrayInsertItem(currentLine, cursorIndex, newCharacter);
+    }
+    else{
+        arrayAppend(currentLine);
+        *(Character *)arrayGetItem(currentLine,arrayGetLength(currentLine)-1) = newCharacter;
+    }
 
     if(currentConsolePosition[1] - LINEHEIGHT >= getHeight()-LINEHEIGHT*2){
         currentConsolePosition[1] -= LINEHEIGHT;

@@ -73,7 +73,7 @@ void* arrayInsertItem(Array* array, int i, Character item){
     }
     //room to just move all other elements by 1 and insert item at index
     else if(array->lastIndex < array->elmCount-1){
-        char* base = (char*)array->firstItem;
+        char* base = (Character*)array->firstItem;
         void* src = base + i * array->elmSize;
         void* dest = base + i+1 * array->elmSize;
         unsigned int bytes_to_move = (array->lastIndex - i+1) * array->elmSize;
@@ -87,8 +87,8 @@ void* arrayInsertItem(Array* array, int i, Character item){
         *(Character*)arrayGetItem(newItemArray, 0) = item;
         //split original array in 2 so newItemArray get get in between them.
         Array* secondArray = newArray(array->lastIndex - i+1, array->elmSize);
-        void* src = (char*)array->firstItem + (i * array->elmSize);
-        void* dest =  (char*)secondArray->firstItem;
+        void* src = (Character*)array->firstItem + (i * array->elmSize);
+        void* dest =  (Character*)secondArray->firstItem;
         unsigned int bytes_to_move = (array->lastIndex - i+1) * array->elmSize;
         //todo original array should be shortened? idk how that works with the free()
         array->lastIndex = i-1;
