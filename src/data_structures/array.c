@@ -63,16 +63,42 @@ void* arrayRemoveItem(Array* array, int i){
     array->lastIndex--;
 }
 
-void* arrayInsertItem(Array* array, int i, void* item){
-    if(array == NULL){
+void* arrayInsertItem(Array* array, int i, Character item){
+    if(array == NULL || i < 0){
         throw("Index out of range");
         return 0;
     }
-    if(i > array->lastIndex){
+    else if(i > array->lastIndex){
         return arrayInsertItem(array->nextArray, i - array->lastIndex - 1, item);
     }
-    // Insert the item at index i
-    //TODO
+    //room to just move all other elements by 1 and insert item at index
+    else if(array->lastIndex < array->elmCount-1){
+        char* base = (char*)array->firstItem;
+        void* src = base + i * array->elmSize;
+        void* dest = base + i+1 * array->elmSize;
+        unsigned int bytes_to_move = (array->lastIndex - i+1) * array->elmSize;
+        memMove(dest, src, bytes_to_move);
+        *(Character*)arrayGetItem(array, i) = item;
+        array->lastIndex++;
+    }
+    //no room so make new array
+    else{
+        Array* newItemArray = newArray(1, array->elmSize);
+        *(Character*)arrayGetItem(newItemArray, 0) = item;
+        //split original array in 2 so newItemArray get get in between them.
+        Array* secondArray = newArray(array->lastIndex - i+1, array->elmSize);
+        void* src = (char*)array->firstItem + (i * array->elmSize);
+        void* dest =  (char*)secondArray->firstItem;
+        unsigned int bytes_to_move = (array->lastIndex - i+1) * array->elmSize;
+        //todo original array should be shortened? idk how that works with the free()
+        array->lastIndex = i-1;
+        //link all arrays together so they become one array
+        newItemArray->nextArray = secondArray;
+        secondArray->nextArray = array->nextArray;
+        array->nextArray = newItemArray;
+    }
+
+
 }
 
 /**
@@ -91,7 +117,7 @@ void arrayAppend(Array* array){
         array->nextArray->lastIndex = 0;
     }
     else{
-        array->lastIndex+=1;
+        array->lastIndex++;
     }
 };
 

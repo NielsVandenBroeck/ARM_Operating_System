@@ -1,3 +1,10 @@
+struct character {
+    char value;
+    int color;
+    //add other attributes later
+};
+typedef struct character Character;
+
 struct array {   // Structure declaration
     int elmCount;           // Member (int variable)
     int elmSize;
@@ -13,7 +20,7 @@ void arrayDelete(Array* array);
 Array* ArrayConcat(Array* array1, Array* array2);
 void* arrayGetItem(Array* array, int i);
 void* arrayRemoveItem(Array* array, int i);
-void* arrayInsertItem(Array* array, int i, void* item);
+void* arrayInsertItem(Array* array, int i, Character item);
 void arrayAppend(Array* array);
 int arrayGetLength(Array* array);
 void arraySimplify();

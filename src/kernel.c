@@ -81,15 +81,15 @@ void main()
     fb_init();
     initConsole();
 
-    printText("hello world\n", green);
+    //printText("hello world\n", green);
     start_core1(core1_main);
 
-    unsigned long* firstItem = malloc(4 * sizeof(unsigned long));
-    for(int i = 0; i < 4; i++){
-        firstItem[i] = testProg[i];
-    }
-    void (*func_ptr)() = (void*)firstItem;
-    unsigned long lrRegister = read_from_lr();
+//    unsigned long* firstItem = malloc(4 * sizeof(unsigned long));
+//    for(int i = 0; i < 4; i++){
+//        firstItem[i] = testProg[i];
+//    }
+//    void (*func_ptr)() = (void*)firstItem;
+//    unsigned long lrRegister = read_from_lr();
     /*
     asm volatile (
             "mov x6, %0\n"   // Move the address to x0
@@ -99,15 +99,15 @@ void main()
             : "x6"           // Clobbered register
             );*/
 
-    clear_core2();
-    start_core2(func_ptr);
-    write_to_lr(lrRegister);
+//    clear_core2();
+//    start_core2(func_ptr);
+//    write_to_lr(lrRegister);
 
-    wait_msec(5000);
+//    wait_msec(5000);
     //start_core2(core2_main);
-    unsigned int setNumber = mmio_read(1234);
-    printText("\nSet number: ",red);
-    printInt(setNumber, red);
-    printText("\n",red);
+//    unsigned int setNumber = mmio_read(1234);
+//    printText("\nSet number: ",red);
+//    printInt(setNumber, red);
+//    printText("\n",red);
     core0_main();
 }

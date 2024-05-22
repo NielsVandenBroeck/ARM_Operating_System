@@ -4,13 +4,6 @@ enum{
     LINEHEIGHT = 10
 };
 
-struct character {
-    char value;
-    int color;
-    //add other attributes later
-};
-
-typedef struct character Character;
 
 //Communication over serial port, used for testing.
 void initConsole();
@@ -38,6 +31,8 @@ void scrollUp();
 void drawCursor();
 
 void clearCursor();
+
+void clearTextBuffer();
 
 void clearConsole();
 

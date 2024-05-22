@@ -29,11 +29,12 @@ void initConsole(){
     *(Array**)arrayGetItem(textBuffer, 0) = currentLine;
 
     //keyboardInterruptionAttach(processChar); //not needed will self check in runConsole, to limit load on input core
+
 }
 
 void runConsole(){
-    printText("user@Ubutnu:/home$", green);
-    inputStartIndex = 18;
+    printText("user@Ubutnu:", green);
+    inputStartIndex = 12;
 
     int cursorCounter = 0;
     uart_print("runConsole\n");
@@ -70,7 +71,8 @@ void processChar(char c){
             currentConsolePosition[0] = XOFFSET;
             currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
         }
-
+        cursorIndex = 0;
+        inputStartIndex = 0;
         // end this console line and add a new one to textBuffer
         arrayAppend(textBuffer);
         currentLine = newArray(0,sizeof (Character));
@@ -106,6 +108,11 @@ void processChar(char c){
         rotateScreen(0);
     }
     else{
+        //check if cursor is not at the end
+        if(cursorIndex < arrayGetLength(currentLine)){
+            currentConsolePosition[0] += FONT_WIDTH;
+            cursorIndex++;
+        }
         printChar(c,CURRENT_COLOR);
     }
 }
@@ -145,7 +152,6 @@ void printInt(unsigned int number, int color){
 }
 
 void printChar(char c, int color){
-    //todo \n should still work here if done in printText()
     //Check if user exceeds screenwidth when does go to next line
     if(currentConsolePosition[0] > getWidth() - XOFFSET){
         currentConsolePosition[1] += LINEHEIGHT;
@@ -194,6 +200,18 @@ void clearCursor(){
     for (int i=-2;i<LINEHEIGHT;i++) {
         drawScaledPixels(currentConsolePosition[0]-1,  currentConsolePosition[1]+i, black);
     }
+}
+
+void clearTextBuffer(){
+    for(int i = currentWindowIndex; i < arrayGetLength(textBuffer);  i++){
+        arrayDelete(*(Array**)arrayGetItem(textBuffer,i));
+    }
+    arrayDelete(textBuffer);
+    textBuffer = newArray(1, sizeof(Array*));
+    currentLine = newArray(0, sizeof(Character));
+    *(Array**)arrayGetItem(textBuffer, 0) = currentLine;
+    currentConsolePosition[0] = XOFFSET;
+    currentConsolePosition[1] = YOFFSET;
 }
 
 void clearConsole(){
