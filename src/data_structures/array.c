@@ -129,18 +129,17 @@ void arrayAppendItem(Array* array, void* item){
      * Implemented by allocating 10 items on stack, or when there is space available moving the lastindex
      */
     if(array->nextArray != NULL){
-        arrayAppendItem(array->nextArray, item);
+        return arrayAppendItem(array->nextArray, item);
     }
     else if(array->lastIndex >= array->elmCount - 1){
         array->nextArray = newArray(10, array->elmSize);
         array->nextArray->lastIndex = -1;
         arrayAppendItem(array->nextArray, item);
+        return;
     }
-    else{
-        void* dest = array->firstItem + ((array->lastIndex+1) * array->elmSize);
-        memMove(dest, item, array->elmSize);
-        array->lastIndex++;
-    }
+    void* dest = array->firstItem + ((array->lastIndex+1) * array->elmSize);
+    memMove(dest, item, array->elmSize);
+    array->lastIndex++;
 };
 
 /**
