@@ -54,7 +54,6 @@ void queuePush(Queue* queue, void* item){
         return NULL;
     }
     arrayAppendItem(queue->array, &item);
-    //*(char*)arrayGetItem(queue->array, arrayGetLength(queue->array) - 1) = item;
 }
 
 int queueGetLenght(Queue* queue){

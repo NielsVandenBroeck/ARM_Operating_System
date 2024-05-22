@@ -47,8 +47,20 @@ void* arrayGetItem(Array* array, int i){
     return array->firstItem + array->elmSize * i;
 }
 
+void arraySetItem(Array* array, int i, void* item){
+    if(array == NULL || i < 0){
+        throw("Index out of range");
+        return 0;
+    }
+    else if(i > array->lastIndex){
+        return arraySetItem(array->nextArray, i - array->lastIndex - 1, item);
+    }
+    void* dest = array->firstItem + (i * array->elmSize);
+    memMove(dest, item, array->elmSize);
+}
+
 //todo remove array if 1 item
-void* arrayRemoveItem(Array* array, int i){
+void arrayRemoveItem(Array* array, int i){
     if(array == NULL || i < 0){
         throw("Index out of range");
         return 0;
@@ -66,7 +78,7 @@ void* arrayRemoveItem(Array* array, int i){
     array->lastIndex--;
 }
 
-void* arrayInsertItem(Array* array, int i, void* item){
+void arrayInsertItem(Array* array, int i, void* item){
     if(array == NULL || i < 0){
         throw("Index out of range");
         return 0;
@@ -109,7 +121,7 @@ void* arrayInsertItem(Array* array, int i, void* item){
 }
 
 /**
- * Add one memory space to the array and place item in it.
+ * Add one memory space to the array
  * @param array
  */
 void arrayAppendItem(Array* array, void* item){
@@ -121,7 +133,7 @@ void arrayAppendItem(Array* array, void* item){
     }
     else if(array->lastIndex >= array->elmCount - 1){
         array->nextArray = newArray(10, array->elmSize);
-        array->nextArray->lastIndex = 0;
+        array->nextArray->lastIndex = -1;
         arrayAppendItem(array->nextArray, item);
     }
     else{

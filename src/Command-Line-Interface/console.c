@@ -24,9 +24,9 @@ void initConsole(){
     setScaleSize(2);
     setRotation(0);
     //Create the array buffer for the displayed text
-    textBuffer = newArray(1, sizeof(Array*));
+    textBuffer = newArray(50, sizeof(Array*));
     currentLine = newArray(0, sizeof(Character));
-    *(Array**)arrayGetItem(textBuffer, 0) = currentLine;
+    arraySetItem(textBuffer,0, &currentLine);
 
 //    printText("                 _   _   _                _                        _                                    -\n", green);
 //    printText("                | | | | | |__    _   _   | |_    _ __    _   _    | |                                   -\n", green);
@@ -85,8 +85,7 @@ void processChar(char c){
         inputStartIndex = 0;
         // end this console line and add a new one to textBuffer
         currentLine = newArray(0,sizeof (Character));
-        arrayAppendItem(textBuffer, currentLine);
-        //*(Array**)arrayGetItem(textBuffer,arrayGetLength(textBuffer)-1) = currentLine;
+        arrayAppendItem(textBuffer,&currentLine);
     }
     else if(c == '\b'){
         //remove previous character
@@ -180,7 +179,6 @@ void printChar(char c, int color){
     }
     else{
         arrayAppendItem(currentLine, &newCharacter);
-
     }
 
     if(currentConsolePosition[1] - LINEHEIGHT >= getHeight()-LINEHEIGHT*2){
@@ -227,7 +225,7 @@ void clearTextBuffer(){
     arrayDelete(textBuffer);
     textBuffer = newArray(1, sizeof(Array*));
     currentLine = newArray(0, sizeof(Character));
-    *(Array**)arrayGetItem(textBuffer, 0) = currentLine;
+    arraySetItem(textBuffer,0, &currentLine);
     currentConsolePosition[0] = XOFFSET;
     currentConsolePosition[1] = YOFFSET;
 }
