@@ -1,6 +1,6 @@
 #include "uart/uart.h"
 #include "graphicInterface/framebuffer.h"
-#include "Command-Line-Interface/console.h"
+#include "command_line_interface/console.h"
 #include "basic/multicore.h"
 #include "basic/keyboard_interrupts.h"
 #include "basic/mb.h"

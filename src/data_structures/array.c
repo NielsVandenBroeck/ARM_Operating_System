@@ -2,7 +2,7 @@
 #include "malloc.h"
 #include "../basic/error.h"
 #include "../graphicInterface/framebuffer.h"
-#include "../Command-Line-Interface/console.h"
+#include "../command_line_interface/console.h"
 #include <stddef.h>
 
 Array* newArray(int length, int elmSize){

@@ -1,7 +1,7 @@
 #include "../basic/mem.h"
 #include "../basic/malloc.h"
 #include "EMMC/EMMC.h"
-#include "../Command-Line-Interface/console.h"
+#include "../command_line_interface/console.h"
 
 void wait(){
     printText("start wait", 0x00FF00);

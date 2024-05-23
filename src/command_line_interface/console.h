@@ -4,6 +4,19 @@ enum{
     LINEHEIGHT = 10
 };
 
+struct character {
+    char value;
+    int color;
+    //add other attributes later
+};
+typedef struct character Character;
+
+typedef void (*Function)(char*);
+struct program {
+    char* name;
+    Function function;
+};
+typedef struct program Program;
 
 //Communication over serial port, used for testing.
 void initConsole();
@@ -12,9 +25,9 @@ void runConsole();
 
 void processChar(char c);
 
-void handleCommand();
+void initiatePreText();
 
-char* readLine();
+void handleCommand();
 
 void runCursor();
 

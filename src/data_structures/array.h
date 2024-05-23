@@ -1,10 +1,3 @@
-struct character {
-    char value;
-    int color;
-    //add other attributes later
-};
-typedef struct character Character;
-
 struct array {   // Structure declaration
     int elmCount;           // Member (int variable)
     int elmSize;
