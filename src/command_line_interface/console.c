@@ -338,7 +338,7 @@ void printInt(unsigned int number, int color){
 
 void printChar(char c, int color){
     if(c == '\n'){
-        if(currentConsolePosition[1] >= getHeight()-LINEHEIGHT*2){
+        if(currentConsolePosition[1] >= getWindowHeight()-LINEHEIGHT*2){
             clearConsole();
             currentWindowIndex += 1;
             currentConsolePosition[0] = XOFFSET;
@@ -355,7 +355,7 @@ void printChar(char c, int color){
     }
     else{
         //Check if user exceeds screenwidth when does go to next line
-        if(currentConsolePosition[0] > getWidth() - XOFFSET){
+        if(currentConsolePosition[0] > getWindowWidth() - XOFFSET){
             currentConsolePosition[1] += LINEHEIGHT;
             currentConsolePosition[0] = XOFFSET;
         }
@@ -371,7 +371,7 @@ void printChar(char c, int color){
             arrayAppendItem(currentLine, &newCharacter);
         }
 
-        if(currentConsolePosition[1] - LINEHEIGHT >= getHeight()-LINEHEIGHT*2){
+        if(currentConsolePosition[1] - LINEHEIGHT >= getWindowHeight()-LINEHEIGHT*2){
             currentConsolePosition[1] -= LINEHEIGHT;
             clearConsole();
             currentWindowIndex += 1;
@@ -382,31 +382,15 @@ void printChar(char c, int color){
 
 }
 
-void drawGlyph(char c, int x, int y, int color){
-    unsigned char *glyph = (unsigned char *)&font + (c < FONT_NUMGLYPHS ? c : 0) * FONT_BPG;
-    for (int i=0;i<FONT_HEIGHT;i++) {
-        for (int j=0;j<FONT_WIDTH;j++){
-            if(*glyph & 1 << j){
-                drawScaledPixels(x+j, y+i, color); //1 value in bitmap, has to be colored
-            }
-            else {
-                //todo background/highlights?
-                //drawScaledPixels(currentConsolePosition[0]+j, currentConsolePosition[1]+i, 0x000000); //0 value in bitmap, pixel set to background color
-            }
-        }
-        glyph += FONT_BPL; //position for next row
-    }
-}
-
 void drawCursor(){
     for (int i=-2;i<LINEHEIGHT;i++) {
-        drawScaledPixels(currentConsolePosition[0]-1, currentConsolePosition[1]+i, CURRENT_COLOR);
+        drawScaledPixelsWindow(currentConsolePosition[0]-1, currentConsolePosition[1]+i, CURRENT_COLOR);
     }
 }
 
 void clearCursor(){
     for (int i=-2;i<LINEHEIGHT;i++) {
-        drawScaledPixels(currentConsolePosition[0]-1,  currentConsolePosition[1]+i, black);
+        drawScaledPixelsWindow(currentConsolePosition[0]-1,  currentConsolePosition[1]+i, black);
     }
 }
 
@@ -427,14 +411,14 @@ void clearConsole(){
     int yOffset = YOFFSET;
 
     unsigned int length = arrayGetLength(textBuffer);
-    if(length > (getHeight()/LINEHEIGHT)-2+currentWindowIndex){
-        length = (getHeight()/LINEHEIGHT)-2+currentWindowIndex;
+    if(length > (getWindowHeight()/LINEHEIGHT)-2+currentWindowIndex){
+        length = (getWindowHeight()/LINEHEIGHT)-2+currentWindowIndex;
     }
     for(int i = currentWindowIndex; i < length;  i++){
         Array* consoleLine = *(Array**)arrayGetItem(textBuffer,i);
         for(int j = 0; j < arrayGetLength(consoleLine);  j++){
             //Check if user exceeds screenwidth when does go to next line
-            if(xOffset > getWidth() - XOFFSET){
+            if(xOffset > getWindowWidth() - XOFFSET){
                 yOffset += LINEHEIGHT;
                 xOffset = XOFFSET;
             }
@@ -452,14 +436,14 @@ void drawFromBuffer(){
     unsigned int length = arrayGetLength(textBuffer);
     int xOffset = XOFFSET;
     int yOffset = YOFFSET;
-    if(length > (getHeight()/LINEHEIGHT)-2+currentWindowIndex){
-        length = (getHeight()/LINEHEIGHT)-2+currentWindowIndex;
+    if(length > (getWindowHeight()/LINEHEIGHT)-2+currentWindowIndex){
+        length = (getWindowHeight()/LINEHEIGHT)-2+currentWindowIndex;
     }
     //draw all lines except for the last one
     for(int i = currentWindowIndex; i < length-1;  i++){
         Array* consoleLine = *(Array**)arrayGetItem(textBuffer,i);
         for(int j = 0; j < arrayGetLength(consoleLine);  j++){
-            if(xOffset > getWidth() - XOFFSET){
+            if(xOffset > getWindowWidth() - XOFFSET){
                 yOffset += LINEHEIGHT;
                 xOffset = XOFFSET;
             }
@@ -476,7 +460,7 @@ void drawFromBuffer(){
             currentConsolePosition[0] = xOffset;
             currentConsolePosition[1] = yOffset;
         }
-        if(xOffset > getWidth() - XOFFSET){
+        if(xOffset > getWindowWidth() - XOFFSET){
             yOffset += LINEHEIGHT;
             xOffset = XOFFSET;
         }
@@ -490,7 +474,7 @@ void rotateScreen(int rotation){
     clearConsole();
     setRotation(rotation);
     //edit current window for resized height
-    int newWindow = arrayGetLength(textBuffer) - ((getHeight()/LINEHEIGHT)-2);
+    int newWindow = arrayGetLength(textBuffer) - ((getWindowHeight()/LINEHEIGHT)-2);
     if(newWindow > 0){
         currentWindowIndex = newWindow;
     }

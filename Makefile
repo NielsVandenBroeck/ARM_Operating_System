@@ -2,7 +2,7 @@ CFILES = $(shell find $(SOURCEDIR) -name '*.c')
 SFILES = $(shell find $(SOURCEDIR) -name '*.S')
 OFILES = $(CFILES:.c=.o) $(SFILES:.S=.o)
 
-GCCFLAGS = -Wall -O2 -ffreestanding -nostdlib -mcpu=cortex-a53+nosimd
+GCCFLAGS = -Wall -ffreestanding -nostdlib -mcpu=cortex-a53+nosimd
 GCCPATH = ~/gcc-arm-10.3-2021.07-x86_64-aarch64-none-elf/bin
 
 all: clean kernel8.img

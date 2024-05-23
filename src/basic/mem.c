@@ -34,3 +34,21 @@ void memMove(void *dest, void *src,  unsigned int  n)
     for (int i=0; i<n; i++)
         cdest[i] = temp[i];
 }
+
+void *memset(void *s, int c,  unsigned long n) {
+    unsigned char *p = s;
+    while (n--) {
+        *p++ = (unsigned char)c;
+    }
+    return s;
+}
+
+// Custom implementation of memcpy
+void *memcpy(void *dest, const void *src,  unsigned long n) {
+    unsigned char *d = dest;
+    const unsigned char *s = src;
+    while (n--) {
+        *d++ = *s++;
+    }
+    return dest;
+}

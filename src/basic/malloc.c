@@ -2,6 +2,8 @@
 #include "malloc.h"
 #include "os.h"
 #include "error.h"
+#include "wait.h"
+#include "../uart/uart.h"
 
 //Temporarly used from https://github.com/jserv/mini-arm-os/tree/master
 
@@ -18,10 +20,11 @@ union header {
 typedef union header Header;
 
 //  0 - 73741824 bytes size assigned for TEXT and DATA, HEAP STARTS at adress 73741824
-static unsigned long program_break = 73741824;
+static unsigned long program_break = 93741824;
 
 static Header base; /* empty list to get started */
 static Header *freep = NULL; /* start of free list */
+int mallocLock = 0;
 
 static void *sbrk(unsigned int nbytes)
 {
@@ -32,6 +35,14 @@ static void *sbrk(unsigned int nbytes)
 
 void *malloc(unsigned int nbytes)
 {
+    if(mallocLock){
+        uart_print("\nmalloc locked\n");
+        wait_msec(500);
+    }
+    mallocLock = 1;
+    uart_print("malloc start: ");
+    uart_printInt(program_break);
+    uart_printc('\n');
     Header *p, *prevp;
     unsigned int nunits;
     void *cp;
@@ -53,6 +64,10 @@ void *malloc(unsigned int nbytes)
                 p->s.size = nunits;
             }
             freep = prevp;
+            uart_print("malloc end: ");
+            uart_printInt(program_break);
+            uart_printc('\n');
+            mallocLock = 0;
             return (void *)(p + 1);
         }
 
@@ -60,6 +75,7 @@ void *malloc(unsigned int nbytes)
             cp = sbrk(nunits * sizeof(Header));
             if (cp == (void *) -1) {
                 throw("Error while allocating memory. No more memory available.");
+                mallocLock = 0;
                 return NULL;
             } else {
                 p = (Header *) cp;

@@ -1,3 +1,6 @@
+#ifndef __CONSOLE_H_
+#define __CONSOLE_H_
+
 enum{
     XOFFSET = 10,
     YOFFSET = 10,
@@ -37,8 +40,6 @@ void printInt(unsigned int number, int color);
 
 void printChar(char c, int color);
 
-void drawGlyph(char c, int x, int y, int color);
-
 void scrollUp();
 
 void drawCursor();
@@ -55,3 +56,4 @@ void drawFromBuffer();
 void rotateScreen(int orientation);
 void scaleScreen(int multiplier);
 void changeTextColor(int color);
+#endif

@@ -4,11 +4,13 @@
 #include "basic/multicore.h"
 #include "basic/keyboard_interrupts.h"
 #include "basic/mb.h"
+#include "taskbar/taskbar.h"
+#include "basic/wait.h"
 
 void core1_main(void)
 {
-    uart_init();
     clear_core1();
+    uart_init();
     KeyboardInterruptionInit();
     KeyboardInterruptionHandler(uart_readchar);
 }
@@ -75,15 +77,28 @@ void core0_main(void)
     //    }
 }
 
+void core2_main(void)
+{
+    for(int i = 0; i < 5; i++){
+        uart_print("test\n");
+        wait_msec(1000);
+    }
+
+}
+
 void main()
 {
     //Make the frame buffer ready to use
     fb_init();
+    uart_init();
+    taskBarInit();
+    cores_init();
+
     initConsole();
-
     //printText("hello world\n", green);
-    start_core1(core1_main);
 
+    //start_core2(core2_main);
+    start_core1(core1_main);
 //    unsigned long* firstItem = malloc(4 * sizeof(unsigned long));
 //    for(int i = 0; i < 4; i++){
 //        firstItem[i] = testProg[i];

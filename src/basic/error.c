@@ -9,7 +9,7 @@ void throw(char *s){
 
     for (int i=0;i < 10; i++) {
         for (int j = 0; j < 10; j++) {
-            drawScaledPixels(getWidth() - j -5 , 5 + i,red); //1 value in bitmap, has to be colored
+            drawScaledPixelsWindow(getWindowWidth() - j -5 , 5 + i,red); //1 value in bitmap, has to be colored
         }
     }
 }

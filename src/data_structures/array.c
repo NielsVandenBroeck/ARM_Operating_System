@@ -11,8 +11,6 @@ Array* newArray(int length, int elmSize){
     Array* arrayItem = (Array *)malloc(sizeof(Array));
     arrayItem[0] = createdArray;
     return arrayItem;
-
-
 }
 
 //TODO delete array item
