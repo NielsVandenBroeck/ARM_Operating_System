@@ -81,20 +81,30 @@ void drawVerticalLine(int* xPos){
 }
 
 void drawTaskBarItems(Array* items){
-    for(int i = 0; i < arrayGetLength(items); i++){
+    int size = arrayGetLength(items);
+    uart_print("array lenght:");
+    uart_printInt(size);
+
+    for(int i = 0; i < size; i++){
         TaskBarItem item = (*(TaskBarItem*)arrayGetItem(items,i));
         int* drawPosition = &xDrawPosLeft;
         drawText(item.text, drawPosition);
-        drawIcon(item.icon, drawPosition);
+        //drawIcon(item.icon, drawPosition);
         (*drawPosition) += 5;
         drawVerticalLine(drawPosition);
     }
 }
 
+int taskBarLockLock = 0;
 void taskBarDraw(){
+    while(taskBarLockLock){
+        wait_msec(500);
+    }
+    taskBarLockLock = 1;
     xDrawPosLeft = 5;
     xDrawPosRight = 0;
     drawBackground();
     drawTaskBarItems(leftTaskBarItems);
+    taskBarLockLock = 0;
 }
 

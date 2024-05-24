@@ -36,13 +36,9 @@ static void *sbrk(unsigned int nbytes)
 void *malloc(unsigned int nbytes)
 {
     if(mallocLock){
-        uart_print("\nmalloc locked\n");
         wait_msec(500);
     }
     mallocLock = 1;
-    uart_print("malloc start: ");
-    uart_printInt(program_break);
-    uart_printc('\n');
     Header *p, *prevp;
     unsigned int nunits;
     void *cp;
@@ -64,9 +60,6 @@ void *malloc(unsigned int nbytes)
                 p->s.size = nunits;
             }
             freep = prevp;
-            uart_print("malloc end: ");
-            uart_printInt(program_break);
-            uart_printc('\n');
             mallocLock = 0;
             return (void *)(p + 1);
         }

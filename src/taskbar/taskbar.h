@@ -11,7 +11,7 @@
 
 struct taskBarItem{
     char* text;
-    int icon[16][16]
+    //int icon[16][16]
 };
 
 typedef struct taskBarItem TaskBarItem;

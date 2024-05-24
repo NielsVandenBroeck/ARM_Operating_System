@@ -3,6 +3,7 @@
 #include "../basic/error.h"
 #include "../graphicInterface/framebuffer.h"
 #include "../command_line_interface/console.h"
+#include "../uart/uart.h"
 #include <stddef.h>
 
 Array* newArray(int length, int elmSize){
@@ -46,6 +47,7 @@ void* arrayGetItem(Array* array, int i){
 }
 
 void arraySetItem(Array* array, int i, void* item){
+    uart_print("array set\n");
     if(array == NULL || i < 0){
         throw("Index out of range");
         return 0;
