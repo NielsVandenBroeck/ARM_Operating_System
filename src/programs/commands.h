@@ -9,6 +9,8 @@
 #include "calc.h"
 #include "echo.h"
 #include "fibonacci.h"
+#include "reboot.h"
+#include "pong.h"
 
 typedef void (*Function)(char*);
 struct program {
@@ -26,6 +28,8 @@ static Program programs[] = {
         {"calc", calc},
         {"echo", echo},
         {"fibonacci", fibonacci},
+        {"reboot",reboot},
+        {"pong", pong}
         };
 
 #endif //ARM_OPERATING_SYSTEM_COMMANDS_C

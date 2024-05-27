@@ -1,0 +1,7 @@
+
+#ifndef ARM_OPERATING_SYSTEM_PONG_H
+#define ARM_OPERATING_SYSTEM_PONG_H
+
+void pong(char* params);
+
+#endif //ARM_OPERATING_SYSTEM_PONG_H

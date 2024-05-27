@@ -8,6 +8,7 @@
 #include "../data_structures/array.h"
 #include "../uart/uart.h"
 #include "../programs/commands.h"
+#include "../data_structures/string.h"
 #include <stddef.h>
 
 //variables related to texbuffer
@@ -22,8 +23,8 @@ int CURRENT_COLOR = white;
 
 void initConsole(){
     CURRENT_COLOR = white;
-    setScaleSize(2);
-    setRotation(3);
+    setScaleSize(1);
+    setRotation(0);
     //Create the array buffer for the displayed text
     textBuffer = newArray(1, sizeof(Array*));
     currentLine = newArray(0, sizeof(Character));
@@ -116,14 +117,6 @@ void initiatePreText(){
     inputStartIndex = cursorIndex;
 }
 
-int strcmp(const char *str1, const char *str2) {
-    while (*str1 && (*str1 == *str2)) {
-        str1++;
-        str2++;
-    }
-    return *(unsigned char *)str1 - *(unsigned char *)str2;
-}
-
 void handleCommand(){
     //find out where the first space is located
     int spaceIndex = inputStartIndex;
@@ -135,7 +128,6 @@ void handleCommand(){
         spaceIndex++;
     }
     if(spaceIndex-inputStartIndex == 0){
-        printChar('\n',CURRENT_COLOR);
         return;
     }
     char programName[spaceIndex-inputStartIndex+1];
@@ -155,14 +147,12 @@ void handleCommand(){
     }
     printChar('\n',CURRENT_COLOR);
     //todo change 7 with length of programs
-    for(int i = 0; i < 7; i++){
+    for(int i = 0; i < 10; i++){
         if(strcmp(programName,programs[i].name) == 0){
             programs[i].function(&params[0]);
             return;
         }
     }
-    printInt(spaceIndex-inputStartIndex ,blue);
-    printInt(paramLength,red);
     printText(programName, CURRENT_COLOR);
     printText(": Command not found.", CURRENT_COLOR);
 }

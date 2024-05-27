@@ -1,6 +1,6 @@
 SECTIONS
 {
-    .text : { KEEP(*(.text.boot)) *(.text .text.* .gnu.linkonce.t*) }
+    .text : { KEEP(*(.text.boot)) *(.text .text.* .gnu.linkonce.t*) KEEP(*(.text.reset))}
     .rodata : { *(.rodata .rodata.* .gnu.linkonce.r*) }
     PROVIDE(_data = .);
     .data : { *(.data .data.* .gnu.linkonce.d*) }
