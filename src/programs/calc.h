@@ -1,0 +1,7 @@
+
+#ifndef ARM_OPERATING_SYSTEM_CALC_H
+#define ARM_OPERATING_SYSTEM_CALC_H
+
+void calc(char* params);
+
+#endif //ARM_OPERATING_SYSTEM_CALC_H

@@ -291,7 +291,6 @@ void fb_init()
         height = mbox[11];      // Actual physical height
         pitch = mbox[33];       // Number of bytes per line
         isrgb = mbox[24];       // Pixel order
-        setRotation(0);
         fb = (unsigned char *)((long)mbox[28]);
     }
 
@@ -341,6 +340,7 @@ void setScaleSize(int size){
     width /= size;
     height /= size;
     sizeScale = size;
+    //drawScreen(black);
 }
 
 void setRotation(int angle){
@@ -350,6 +350,7 @@ void setRotation(int angle){
         height = temp;
     }
     rotation = angle;
+    //drawScreen(black);
 }
 
 void drawPixel(int x, int y, int color)

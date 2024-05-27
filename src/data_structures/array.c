@@ -1,8 +1,6 @@
 #include "array.h"
 #include "malloc.h"
 #include "../basic/error.h"
-#include "../graphicInterface/framebuffer.h"
-#include "../command_line_interface/console.h"
 #include "../uart/uart.h"
 #include <stddef.h>
 

@@ -7,19 +7,16 @@ enum{
     LINEHEIGHT = 10
 };
 
+//variables related to pixels and positions
+extern int currentConsolePosition[2]; //The position to draw the next character
+extern int CURRENT_COLOR; //The color of the text to be drawn
+
 struct character {
     char value;
     int color;
     //add other attributes later
 };
 typedef struct character Character;
-
-typedef void (*Function)(char*);
-struct program {
-    char* name;
-    Function function;
-};
-typedef struct program Program;
 
 //Communication over serial port, used for testing.
 void initConsole();
@@ -43,6 +40,10 @@ void printChar(char c, int color);
 void scrollUp();
 
 void drawCursor();
+
+void clearLastLine();
+
+void drawLastLine();
 
 void clearCursor();
 

@@ -1,0 +1,6 @@
+#ifndef ARM_OPERATING_SYSTEM_SCALE_H
+#define ARM_OPERATING_SYSTEM_SCALE_H
+
+void scale(char* params);
+
+#endif //ARM_OPERATING_SYSTEM_SCALE_H

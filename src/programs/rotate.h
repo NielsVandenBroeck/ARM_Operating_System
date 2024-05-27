@@ -1,0 +1,6 @@
+#ifndef ARM_OPERATING_SYSTEM_ROTATE_H
+#define ARM_OPERATING_SYSTEM_ROTATE_H
+
+void rotate(char* params);
+
+#endif //ARM_OPERATING_SYSTEM_ROTATE_H

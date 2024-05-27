@@ -143,7 +143,6 @@ void main()
 
     initConsole();
     //printText("hello world\n", green);
-    /*
     start_core1(core1_main);
     wait_msec(500);
     start_core2(core2_main);
