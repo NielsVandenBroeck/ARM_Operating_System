@@ -140,11 +140,12 @@ void handleCommand(){
     if(arrayGetLength(currentLine)-(spaceIndex+1) > 0){
         paramLength = arrayGetLength(currentLine)-(spaceIndex+1);
     }
-    char params[paramLength];
+    char params[paramLength+1];
     for(int i = spaceIndex+1; i < arrayGetLength(currentLine); i++){
         Character c = *(Character *)arrayGetItem(currentLine,i);
         params[i-(spaceIndex+1)] = c.value;
     }
+    params[paramLength] = '\0';
     printChar('\n',CURRENT_COLOR);
     //todo change 7 with length of programs
     for(int i = 0; i < 10; i++){

@@ -2,7 +2,7 @@
 #include "malloc.h"
 #include "os.h"
 #include "error.h"
-#include "wait.h"
+#include "time.h"
 #include "../uart/uart.h"
 
 //Temporarly used from https://github.com/jserv/mini-arm-os/tree/master

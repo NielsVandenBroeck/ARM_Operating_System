@@ -2,7 +2,7 @@
 #include "../icons/icon.h"
 #include "../taskbar/taskbar.h"
 #include "../uart/uart.h"
-#include "wait.h"
+#include "time.h"
 #include <stddef.h>
 
 void store32(unsigned long address, unsigned long value)

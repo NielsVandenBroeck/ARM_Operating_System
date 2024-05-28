@@ -6,7 +6,7 @@
 void color(char* params){
     if (strcmp(params, "black") == 0) {
         changeTextColor(black);
-    } else if (strcmp(params, "bluee") == 0) {
+    } else if (strcmp(params, "blue") == 0) {
         changeTextColor(blue);
     } else if (strcmp(params, "red") == 0) {
         changeTextColor(red);

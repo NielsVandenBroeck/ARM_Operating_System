@@ -97,7 +97,6 @@ void arrayInsertItem(Array* array, int i, void* item){
     }
     //no room so make new array
     else{
-        //todo edge case if array has length 1
         Array* newItemArray = newArray(1, array->elmSize);
         //put item in address of firstitem of the array
         memMove(newItemArray->firstItem,item, array->elmSize);

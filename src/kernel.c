@@ -5,7 +5,7 @@
 #include "basic/keyboard_interrupts.h"
 #include "basic/mb.h"
 #include "taskbar/taskbar.h"
-#include "basic/wait.h"
+#include "basic/time.h"
 
 void core1_main(void)
 {

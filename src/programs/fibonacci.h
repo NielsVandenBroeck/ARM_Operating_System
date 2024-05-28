@@ -1,7 +1,0 @@
-
-#ifndef ARM_OPERATING_SYSTEM_FIBONACCI_H
-#define ARM_OPERATING_SYSTEM_FIBONACCI_H
-
-void fibonacci(char* params);
-
-#endif //ARM_OPERATING_SYSTEM_FIBONACCI_H

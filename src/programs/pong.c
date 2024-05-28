@@ -2,6 +2,7 @@
 #include "../command_line_interface/console.h"
 #include "../graphicInterface/framebuffer.h"
 #include "../basic/keyboard_interrupts.h"
+#include "../basic/time.h"
 #include <stddef.h>
 
 struct paddle{
@@ -34,7 +35,7 @@ void initPaddle(Paddle* player, int xPos, int yPos) {
 void initBall(Ball* ball, int xPos, int yPos) {
     ball->x = xPos;
     ball->y = yPos;
-    ball->dx = 1;
+    ball->dx = 2;
     ball->dy = 2;
     for(int y = ball->y-3; y < ball->y+3; y++){
         for(int x = ball->x-3; x < ball->x+3; x++){
@@ -96,14 +97,14 @@ void goRight(Paddle* player){
     }
 }
 
-void updateBall(Ball* ball){
+void updateBall(Ball* ball, int multiplier){
     for(int y = ball->y-3; y < ball->y+3; y++){
         for(int x = ball->x-3; x < ball->x+3; x++){
             drawScaledPixelsWindow(x,y,black);
         }
     }
-    ball->x += ball->dx;
-    ball->y += ball->dy;
+    ball->x += (ball->dx/2)*multiplier;
+    ball->y += (ball->dy/2)*multiplier;
     for(int y = ball->y-3; y < ball->y+3; y++){
         for(int x = ball->x-3; x < ball->x+3; x++){
             drawScaledPixelsWindow(x,y,white);
@@ -118,10 +119,32 @@ void checkCollision(Paddle* player1, Paddle* player2, Ball* ball){
     }
     // Collision with paddles
     if(ball->y >= player1->y-18 && ball->x > player1->x-70 && ball->x < player1->x+70){
-        ball->dy = -ball->dy;
+        if(ball->dy < 0){
+            ball->dy = -ball->dy+1;
+        }
+        else{
+            ball->dy = -ball->dy-1;
+        }
+        if(ball->dx < 0){
+            ball->dx = ball->dx-1;
+        }
+        else{
+            ball->dx = ball->dx+1;
+        }
     }
     if(ball->y <= player2->y+18 && ball->x > player2->x-70 && ball->x < player2->x+70){
-        ball->dy = -ball->dy;
+        if(ball->dy < 0){
+            ball->dy = -ball->dy+1;
+        }
+        else{
+            ball->dy = -ball->dy-1;
+        }
+        if(ball->dx < 0){
+            ball->dx = ball->dx-1;
+        }
+        else{
+            ball->dx = ball->dx+1;
+        }
     }
 }
 
@@ -148,6 +171,8 @@ void gameLoop(){
         initPaddle(&player2, 960, 65);
         initBall(&ball,960, 540);
         while(1){
+            int startTime = 0;
+            start_timer(&startTime);
             char* inputChar = keyboardInterruptionGetChar();
             while (inputChar != NULL){
                 if(*inputChar == '&'){
@@ -167,7 +192,9 @@ void gameLoop(){
                 }
                 inputChar = keyboardInterruptionGetChar();
             }
-            updateBall(&ball);
+            wait_msec(10);
+            int elapsedTime = elapsed_time(startTime);
+            updateBall(&ball, elapsedTime/10);
             checkCollision(&player1, &player2, &ball);
             if(ball.y < 5){
                 updateScore(&score, 1);
@@ -183,7 +210,6 @@ void gameLoop(){
                 clearBall(&ball);
                 break;
             }
-            wait_msec(5);
         }
     }
 }

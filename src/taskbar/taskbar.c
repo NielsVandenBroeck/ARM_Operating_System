@@ -3,7 +3,7 @@
 #include "../data_structures/array.h"
 #include "../uart/uart.h"
 #include "../command_line_interface/Font.h"
-#include "../basic/wait.h"
+#include "../basic/time.h"
 #include <stddef.h>
 
 Array* leftTaskBarItems = NULL;

@@ -8,7 +8,6 @@
 #include "color.h"
 #include "calc.h"
 #include "echo.h"
-#include "fibonacci.h"
 #include "reboot.h"
 #include "pong.h"
 
@@ -27,7 +26,6 @@ static Program programs[] = {
         {"color", color},
         {"calc", calc},
         {"echo", echo},
-        {"fibonacci", fibonacci},
         {"reboot",reboot},
         {"pong", pong}
         };

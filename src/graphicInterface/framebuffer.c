@@ -493,10 +493,6 @@ void drawGlyph(char c, int x, int y, int color){
             if(*glyph & 1 << j){
                 drawScaledPixelsWindow(x+j, y+i, color); //1 value in bitmap, has to be colored
             }
-            else {
-                //todo background/highlights?
-                //drawScaledPixelsWindow(currentConsolePosition[0]+j, currentConsolePosition[1]+i, 0x000000); //0 value in bitmap, pixel set to background color
-            }
         }
         glyph += FONT_BPL; //position for next row
     }
@@ -508,10 +504,6 @@ void drawGlyphScreen(char c, int x, int y, int color){
         for (int j=0;j<FONT_WIDTH;j++){
             if(*glyph & 1 << j){
                 drawScaledPixelsScreen(x+j, y+i, color); //1 value in bitmap, has to be colored
-            }
-            else {
-                //todo background/highlights?
-                //drawScaledPixelsWindow(currentConsolePosition[0]+j, currentConsolePosition[1]+i, 0x000000); //0 value in bitmap, pixel set to background color
             }
         }
         glyph += FONT_BPL; //position for next row
