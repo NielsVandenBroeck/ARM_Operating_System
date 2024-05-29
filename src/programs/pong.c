@@ -35,8 +35,10 @@ void initPaddle(Paddle* player, int xPos, int yPos) {
 void initBall(Ball* ball, int xPos, int yPos) {
     ball->x = xPos;
     ball->y = yPos;
-    ball->dx = 2;
-    ball->dy = 2;
+
+    int values[] = {-2, -1, 1, 2};
+    ball->dx = values[random(4)];
+    ball->dy = values[random(4)];
     for(int y = ball->y-3; y < ball->y+3; y++){
         for(int x = ball->x-3; x < ball->x+3; x++){
             drawScaledPixelsWindow(x,y,white);
@@ -103,8 +105,8 @@ void updateBall(Ball* ball, int multiplier){
             drawScaledPixelsWindow(x,y,black);
         }
     }
-    ball->x += (ball->dx/2)*multiplier;
-    ball->y += (ball->dy/2)*multiplier;
+    ball->x += ball->dx*multiplier;
+    ball->y += ball->dy*multiplier;
     for(int y = ball->y-3; y < ball->y+3; y++){
         for(int x = ball->x-3; x < ball->x+3; x++){
             drawScaledPixelsWindow(x,y,white);
@@ -161,7 +163,7 @@ void updateScore(Score* score, int player){
     }
 }
 
-void gameLoop(){
+void pongGameLoop(){
     Score score;
     initScore(&score);
     while(1){
@@ -176,6 +178,10 @@ void gameLoop(){
             char* inputChar = keyboardInterruptionGetChar();
             while (inputChar != NULL){
                 if(*inputChar == '&'){
+                    printText("Final score: ",CURRENT_COLOR);
+                    printInt(score.player1, CURRENT_COLOR);
+                    printChar('-', CURRENT_COLOR);
+                    printInt(score.player2, CURRENT_COLOR);
                     return;
                 }
                 if(*inputChar == 'q'){
@@ -220,7 +226,7 @@ void pong(char* params){
     clearConsole();
     setRotation(0);
     setScaleSize(1);
-    gameLoop();
+    pongGameLoop();
     drawScreen(black);
     drawFromBuffer();
 }
