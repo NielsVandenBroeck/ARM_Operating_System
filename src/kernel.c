@@ -101,7 +101,7 @@ void core2_main(void)
 }
 
 //compiled program
-unsigned long testProg[] = {0xD2800640,0xD2800600,0x91002800,0xD65F03C0,};
+unsigned long testProg[] = {0xD2800547,0xD65F03C0,};
 
 unsigned int read_from_x0() {
     unsigned int value;
@@ -113,10 +113,10 @@ void write_to_x0(unsigned int value) {
     __asm volatile ("mov x0, %0" : : "r" (value));
 }
 
-void extrnTest(void)
+void extrnTest()
 {
-    unsigned long* firstItem = malloc(4 * sizeof(unsigned long));
-    for(int i = 0; i < 4; i++){
+    unsigned long* firstItem = malloc(2 * sizeof(unsigned long));
+    for(int i = 0; i < 2; i++){
         firstItem[i] = testProg[i];
     }
     void (*func_ptr)() = (void*)firstItem;
@@ -147,7 +147,6 @@ void main()
     wait_msec(500);
     start_core2(core2_main);
     wait_msec(500);
-    uart_print("back to the main");
+    extrnTest();
     core0_main();
-     */
 }

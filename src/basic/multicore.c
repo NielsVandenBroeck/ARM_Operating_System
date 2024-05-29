@@ -37,7 +37,6 @@ void endCore(int coreNumber, char* coreName){
     redrawTaskBarItem(item1, LEFT, coreNumber);
     taskBarDraw();
     while(1){
-        uart_print("core dead test\n");
         wait_msec(5000);
     }
 }
