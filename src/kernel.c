@@ -149,4 +149,5 @@ void main()
     wait_msec(500);
     uart_print("back to the main");
     core0_main();
+     */
 }
