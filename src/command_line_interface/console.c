@@ -19,11 +19,12 @@ static int cursorIndex = 0; //index in the currentLine where the cursor is posit
 static int inputStartIndex = 0; //index in the current line that indicates the start of the user input
 
 int currentConsolePosition[2]={XOFFSET,YOFFSET};
+int lastLineStart = YOFFSET;
 int CURRENT_COLOR = white;
 
 void initConsole(){
     CURRENT_COLOR = white;
-    setScaleSize(1);
+    setScaleSize(2);
     setRotation(0);
     //Create the array buffer for the displayed text
     textBuffer = newArray(1, sizeof(Array*));
@@ -32,19 +33,19 @@ void initConsole(){
 }
 
 void runConsole(){
-    printText("Welcome to:\n",CURRENT_COLOR);
-    printText(" _____                                      _____ \n",CURRENT_COLOR);
-    printText("( ___ )                                    ( ___ )\n",CURRENT_COLOR);
-    printText(" |   |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|   | \n",CURRENT_COLOR);
-    printText(" |   |  _    _ _           _                |   | \n",CURRENT_COLOR);
-    printText(" |   | | |  | | |         | |               |   | \n",CURRENT_COLOR);
-    printText(" |   | | |  | | |__  _   _| |_ _ __  _   _  |   | \n",CURRENT_COLOR);
-    printText(" |   | | |  | | '_ \\| | | | __| '_ \\| | | | |   | \n",CURRENT_COLOR);
-    printText(" |   | | |__| | |_) | |_| | |_| | | | |_| | |   | \n",CURRENT_COLOR);
-    printText(" |   |  \\____/|_.__/ \\__,_|\\__|_| |_|\\__,_| |   | \n",CURRENT_COLOR);
-    printText(" |   |                                      |   | \n",CURRENT_COLOR);
-    printText(" |___|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|___| \n",CURRENT_COLOR);
-    printText("(_____)                                    (_____)\n",CURRENT_COLOR);
+//    printText("Welcome to:\n",CURRENT_COLOR);
+//    printText(" _____                                      _____ \n",CURRENT_COLOR);
+//    printText("( ___ )                                    ( ___ )\n",CURRENT_COLOR);
+//    printText(" |   |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|   | \n",CURRENT_COLOR);
+//    printText(" |   |  _    _ _           _                |   | \n",CURRENT_COLOR);
+//    printText(" |   | | |  | | |         | |               |   | \n",CURRENT_COLOR);
+//    printText(" |   | | |  | | |__  _   _| |_ _ __  _   _  |   | \n",CURRENT_COLOR);
+//    printText(" |   | | |  | | '_ \\| | | | __| '_ \\| | | | |   | \n",CURRENT_COLOR);
+//    printText(" |   | | |__| | |_) | |_| | |_| | | | |_| | |   | \n",CURRENT_COLOR);
+//    printText(" |   |  \\____/|_.__/ \\__,_|\\__|_| |_|\\__,_| |   | \n",CURRENT_COLOR);
+//    printText(" |   |                                      |   | \n",CURRENT_COLOR);
+//    printText(" |___|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|___| \n",CURRENT_COLOR);
+//    printText("(_____)                                    (_____)\n",CURRENT_COLOR);
     initiatePreText();
 
     int cursorCounter = 0;
@@ -148,7 +149,7 @@ void handleCommand(){
     params[paramLength] = '\0';
     printChar('\n',CURRENT_COLOR);
     //todo change 7 with length of programs
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < 11; i++){
         if(strcmp(programName,programs[i].name) == 0){
             programs[i].function(&params[0]);
             return;
@@ -193,6 +194,7 @@ void printChar(char c, int color){
         else{
             currentConsolePosition[0] = XOFFSET;
             currentConsolePosition[1] += LINEHEIGHT; //on \n, start on new line below
+            lastLineStart += LINEHEIGHT;
         }
         cursorIndex = 0;
         // end this console line and add a new one to textBuffer
@@ -219,6 +221,7 @@ void printChar(char c, int color){
 
         if(currentConsolePosition[1] - LINEHEIGHT >= getWindowHeight()-LINEHEIGHT*2){
             currentConsolePosition[1] -= LINEHEIGHT;
+            lastLineStart -= LINEHEIGHT;
             clearConsole();
             currentWindowIndex += 1;
             drawFromBuffer();
@@ -250,12 +253,12 @@ void clearTextBuffer(){
     arraySetItem(textBuffer,0,&currentLine);
     currentConsolePosition[0] = XOFFSET;
     currentConsolePosition[1] = YOFFSET;
+    lastLineStart = YOFFSET;
 }
 
 void clearLastLine(){
     int xOffset = XOFFSET;
-    // -Yoffset if exceeds line (todo check)
-    int yOffset = currentConsolePosition[1];
+    int yOffset = lastLineStart;
     for(int j = 0; j < arrayGetLength(currentLine);  j++){
         //Check if user exceeds screenwidth when does go to next line
         if(xOffset > getWindowWidth() - XOFFSET){
@@ -271,7 +274,7 @@ void clearLastLine(){
 
 void drawLastLine(){
     int xOffset = XOFFSET;
-    int yOffset = currentConsolePosition[1];
+    int yOffset = lastLineStart;
     //last line is kinda special, so do this appart
     for(int j = 0; j < arrayGetLength(currentLine);  j++){
         if(xOffset > getWindowWidth() - XOFFSET){
@@ -347,10 +350,12 @@ void rotateScreen(int rotation){
     clearConsole();
     setRotation(rotation);
     //edit current window for resized height
-    int newWindow = arrayGetLength(textBuffer) - ((getWindowHeight()/LINEHEIGHT)-2);
-    if(newWindow > 0){
-        currentWindowIndex = newWindow;
-    }
+//    int newWindow = arrayGetLength(textBuffer) - ((getWindowHeight()/LINEHEIGHT)-2);
+//    if(newWindow > 0){
+//        currentWindowIndex = newWindow;
+//    }
+
+
     drawFromBuffer();
 }
 

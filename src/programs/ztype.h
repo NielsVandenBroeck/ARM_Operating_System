@@ -1,0 +1,7 @@
+
+#ifndef ARM_OPERATING_SYSTEM_ZTYPE_H
+#define ARM_OPERATING_SYSTEM_ZTYPE_H
+
+void ztype(char* params);
+
+#endif //ARM_OPERATING_SYSTEM_ZTYPE_H

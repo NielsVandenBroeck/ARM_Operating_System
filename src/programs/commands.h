@@ -10,6 +10,7 @@
 #include "echo.h"
 #include "reboot.h"
 #include "pong.h"
+#include "ztype.h"
 
 typedef void (*Function)(char*);
 struct program {
@@ -27,7 +28,8 @@ static Program programs[] = {
         {"calc", calc},
         {"echo", echo},
         {"reboot",reboot},
-        {"pong", pong}
+        {"pong", pong},
+        {"ztype", ztype}
         };
 
 #endif //ARM_OPERATING_SYSTEM_COMMANDS_C
