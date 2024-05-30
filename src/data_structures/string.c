@@ -8,3 +8,12 @@ int strcmp(const char *str1, const char *str2) {
     }
     return *(unsigned char *)str1 - *(unsigned char *)str2;
 }
+
+void strcpy(char *dest, const char *src) {
+    while (*src) {
+        *dest = *src;
+        dest++;
+        src++;
+    }
+    *dest = '\0';
+}

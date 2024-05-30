@@ -77,7 +77,7 @@ void processChar(char c){
         printChar('\n',CURRENT_COLOR);
         initiatePreText();
     }
-    else if(c == '\b'){
+    else if(c == 127){
         //remove previous character
         if(cursorIndex != inputStartIndex){
             clearLastLine();
@@ -87,14 +87,14 @@ void processChar(char c){
             drawLastLine();
         }
     }
-    else if(c == ':'){
+    else if(c == '.'){
         //go left (cursor)
         if(cursorIndex > inputStartIndex){
             currentConsolePosition[0] -= FONT_WIDTH;
             cursorIndex--;
         }
     }
-    else if(c == '='){
+    else if(c == '/'){
         if(cursorIndex < arrayGetLength(currentLine)){
             currentConsolePosition[0] += FONT_WIDTH;
             cursorIndex++;

@@ -14,6 +14,7 @@ struct taskBarItem{
     //Automatically set
     int startPossition;
     //int icon[16][16]
+    int length;
 };
 
 typedef struct taskBarItem TaskBarItem;

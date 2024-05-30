@@ -9,10 +9,6 @@
 Array* leftTaskBarItems = NULL;
 Array* rightTaskBarItems = NULL;
 
-struct taskBarItemLocator{
-    int leftLocation;
-    int length;
-};
 
 int xDrawPosLeft = 5;
 int xDrawPosRight = 0;
@@ -42,15 +38,12 @@ void redrawTaskBarItem(TaskBarItem item, leftRight position, int i){
     }
 
     int oldStartPossition = (*(TaskBarItem*)arrayGetItem(leftTaskBarItems, i)).startPossition;
-    char* oldText = (*(TaskBarItem*)arrayGetItem(leftTaskBarItems, i)).text;
-    int oldStartPossitionCopy = oldStartPossition;
-    drawText(oldText, &oldStartPossitionCopy, BACKGROUNDCOLOR);
-    uart_print("old text:");
-    uart_print(oldText);
-    uart_printc('\n');
-    uart_print("new text:");
-    uart_print(item.text);
-    uart_printc('\n');
+    for(int y = OFFSET + FONT_HEIGHT/2; y < OFFSET + FONT_HEIGHT/2 + FONT_HEIGHT; y++){
+        for(int x = oldStartPossition; x < oldStartPossition+(*(TaskBarItem*)arrayGetItem(leftTaskBarItems, i)).length; x++){
+            drawScaledPixelsScreen(x,y,BACKGROUNDCOLOR);
+        }
+    }
+
     item.startPossition = oldStartPossition;
     if(position == LEFT){
         arraySetItem(leftTaskBarItems, i, &item);
@@ -58,15 +51,12 @@ void redrawTaskBarItem(TaskBarItem item, leftRight position, int i){
     else{
         arraySetItem(rightTaskBarItems, i, &item);
     }
-
-    int newoldpos = oldStartPossition;
-    int* newoldStartPossitionCopy = &newoldpos;
     ((TaskBarItem*)arrayGetItem(leftTaskBarItems,i))->startPossition = oldStartPossition;
-    oldStartPossition = oldStartPossitionCopy;
-    drawText(item.text, newoldStartPossitionCopy, black);
-    //drawIcon(item.icon, drawPosition);
-    (*newoldStartPossitionCopy) += 5;
-    drawVerticalLine(newoldStartPossitionCopy);
+    drawText(item.text, &oldStartPossition, black);
+    //drawIcon(item.icon, &oldStartPossition);
+    ((TaskBarItem*)arrayGetItem(leftTaskBarItems,i))->length = oldStartPossition-((TaskBarItem*)arrayGetItem(leftTaskBarItems,i))->startPossition;
+    (oldStartPossition) += 5;
+    drawVerticalLine(&oldStartPossition);
 
 }
 
@@ -119,6 +109,7 @@ void drawTaskBarItems(Array* items){
         ((TaskBarItem*)arrayGetItem(items,i))->startPossition = *drawPosition;
         drawText(item.text, drawPosition, black);
         //drawIcon(item.icon, drawPosition);
+        ((TaskBarItem*)arrayGetItem(items,i))->length = *drawPosition-((TaskBarItem*)arrayGetItem(items,i))->startPossition;
         (*drawPosition) += 5;
         drawVerticalLine(drawPosition);
     }

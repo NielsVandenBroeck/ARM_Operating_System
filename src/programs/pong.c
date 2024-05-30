@@ -194,16 +194,16 @@ void pongGameLoop(){
                     printInt(score.player2, CURRENT_COLOR);
                     return;
                 }
-                if(*inputChar == 'q'){
+                if(*inputChar == 'a'){
                     goLeft(&player1);
                 }
                 if(*inputChar == 'd'){
                     goRight(&player1);
                 }
-                if(*inputChar == ':'){
+                if(*inputChar == '.'){
                     goLeft(&player2);
                 }
-                if(*inputChar == '='){
+                if(*inputChar == '/'){
                     goRight(&player2);
                 }
                 inputChar = keyboardInterruptionGetChar();
