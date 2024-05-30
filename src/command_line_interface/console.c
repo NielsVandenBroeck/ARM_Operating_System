@@ -122,41 +122,54 @@ void handleCommand(){
     //find out where the first space is located
     int spaceIndex = inputStartIndex;
     while(spaceIndex < arrayGetLength(currentLine)){
+        uart_print("handel command1\n");
         Character c = *(Character *)arrayGetItem(currentLine,spaceIndex);
         if(c.value == ' '){
             break;
         }
         spaceIndex++;
     }
+    uart_print("handel command2\n");
     if(spaceIndex-inputStartIndex == 0){
         return;
     }
+
     char programName[spaceIndex-inputStartIndex+1];
+    uart_print("handel command3\n");
     for(int i = inputStartIndex; i < spaceIndex; i++){
+        uart_print("handel command4\n");
         Character c = *(Character *)arrayGetItem(currentLine,i);
         programName[i-inputStartIndex] = c.value;
     }
     programName[spaceIndex-inputStartIndex] = '\0';
+    uart_print("handel command5\n");
     int paramLength = 0;
+    uart_print("handel command6\n");
     if(arrayGetLength(currentLine)-(spaceIndex+1) > 0){
         paramLength = arrayGetLength(currentLine)-(spaceIndex+1);
     }
+    uart_print("handel command7\n");
     char params[paramLength+1];
     for(int i = spaceIndex+1; i < arrayGetLength(currentLine); i++){
+        uart_print("handel command8\n");
         Character c = *(Character *)arrayGetItem(currentLine,i);
         params[i-(spaceIndex+1)] = c.value;
     }
+    uart_print("handel command9\n");
     params[paramLength] = '\0';
     printChar('\n',CURRENT_COLOR);
-    //todo change 7 with length of programs
-    for(int i = 0; i < 11; i++){
+
+    uart_print("handel command10\n");
+    for(int i = 0; i < programsLength; i++){
         if(strcmp(programName,programs[i].name) == 0){
             programs[i].function(&params[0]);
             return;
         }
     }
+    uart_print("handel command11\n");
     printText(programName, CURRENT_COLOR);
     printText(": Command not found.", CURRENT_COLOR);
+    uart_print("handel command12\n");
 }
 
 void printText(char *s, int color){

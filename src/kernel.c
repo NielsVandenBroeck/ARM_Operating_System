@@ -139,9 +139,9 @@ void main()
     initConsole();
     //printText("hello world\n", green);
     start_core1(core1_main);
-    wait_msec(500);
+    wait_msec(1000);
     start_core2(core2_main);
-    wait_msec(500);
-    extrnTest();
+    wait_msec(1000);
+    uart_print("back to the main");
     core0_main();
 }

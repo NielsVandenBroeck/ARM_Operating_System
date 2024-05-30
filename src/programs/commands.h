@@ -18,6 +18,7 @@ struct program {
     Function function;
 };
 typedef struct program Program;
+#define programsLength 10
 
 static Program programs[] = {
         {"help", help},
