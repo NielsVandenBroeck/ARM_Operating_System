@@ -7,7 +7,9 @@ void rotate(char* params){
         printText("Invalid parameter, orientation must be an integer between 0 and 4\n", CURRENT_COLOR);
         return;
     }
+    taskBarClear();
     rotateScreen(rotation);
+    taskBarDraw();
     printText("Screen rotated to orientation: ", CURRENT_COLOR);
     printInt(rotation,CURRENT_COLOR);
 }

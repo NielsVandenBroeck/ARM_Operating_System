@@ -24,7 +24,7 @@ int CURRENT_COLOR = white;
 
 void initConsole(){
     CURRENT_COLOR = white;
-    setScaleSize(2);
+    setScaleSize(1);
     setRotation(0);
     //Create the array buffer for the displayed text
     textBuffer = newArray(1, sizeof(Array*));
@@ -33,19 +33,19 @@ void initConsole(){
 }
 
 void runConsole(){
-//    printText("Welcome to:\n",CURRENT_COLOR);
-//    printText(" _____                                      _____ \n",CURRENT_COLOR);
-//    printText("( ___ )                                    ( ___ )\n",CURRENT_COLOR);
-//    printText(" |   |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|   | \n",CURRENT_COLOR);
-//    printText(" |   |  _    _ _           _                |   | \n",CURRENT_COLOR);
-//    printText(" |   | | |  | | |         | |               |   | \n",CURRENT_COLOR);
-//    printText(" |   | | |  | | |__  _   _| |_ _ __  _   _  |   | \n",CURRENT_COLOR);
-//    printText(" |   | | |  | | '_ \\| | | | __| '_ \\| | | | |   | \n",CURRENT_COLOR);
-//    printText(" |   | | |__| | |_) | |_| | |_| | | | |_| | |   | \n",CURRENT_COLOR);
-//    printText(" |   |  \\____/|_.__/ \\__,_|\\__|_| |_|\\__,_| |   | \n",CURRENT_COLOR);
-//    printText(" |   |                                      |   | \n",CURRENT_COLOR);
-//    printText(" |___|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|___| \n",CURRENT_COLOR);
-//    printText("(_____)                                    (_____)\n",CURRENT_COLOR);
+    printText("Welcome to:\n",CURRENT_COLOR);
+    printText(" _____                                      _____ \n",CURRENT_COLOR);
+    printText("( ___ )                                    ( ___ )\n",CURRENT_COLOR);
+    printText(" |   |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|   | \n",CURRENT_COLOR);
+    printText(" |   |  _    _ _           _                |   | \n",CURRENT_COLOR);
+    printText(" |   | | |  | | |         | |               |   | \n",CURRENT_COLOR);
+    printText(" |   | | |  | | |__  _   _| |_ _ __  _   _  |   | \n",CURRENT_COLOR);
+    printText(" |   | | |  | | '_ \\| | | | __| '_ \\| | | | |   | \n",CURRENT_COLOR);
+    printText(" |   | | |__| | |_) | |_| | |_| | | | |_| | |   | \n",CURRENT_COLOR);
+    printText(" |   |  \\____/|_.__/ \\__,_|\\__|_| |_|\\__,_| |   | \n",CURRENT_COLOR);
+    printText(" |   |                                      |   | \n",CURRENT_COLOR);
+    printText(" |___|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|___| \n",CURRENT_COLOR);
+    printText("(_____)                                    (_____)\n",CURRENT_COLOR);
     initiatePreText();
 
     int cursorCounter = 0;

@@ -44,6 +44,14 @@ void redrawTaskBarItem(TaskBarItem item, leftRight position, int i){
     int oldStartPossition = (*(TaskBarItem*)arrayGetItem(leftTaskBarItems, i)).startPossition;
     char* oldText = (*(TaskBarItem*)arrayGetItem(leftTaskBarItems, i)).text;
     int oldStartPossitionCopy = oldStartPossition;
+    drawText(oldText, &oldStartPossitionCopy, BACKGROUNDCOLOR);
+    uart_print("old text:");
+    uart_print(oldText);
+    uart_printc('\n');
+    uart_print("new text:");
+    uart_print(item.text);
+    uart_printc('\n');
+    item.startPossition = oldStartPossition;
     if(position == LEFT){
         arraySetItem(leftTaskBarItems, i, &item);
     }
@@ -51,15 +59,14 @@ void redrawTaskBarItem(TaskBarItem item, leftRight position, int i){
         arraySetItem(rightTaskBarItems, i, &item);
     }
 
-    int* drawPosition = &oldStartPossitionCopy;
-    item.startPossition = *drawPosition;
-    drawText(oldText, drawPosition, BACKGROUNDCOLOR);
-    oldStartPossitionCopy = oldStartPossition;
+    int newoldpos = oldStartPossition;
+    int* newoldStartPossitionCopy = &newoldpos;
+    ((TaskBarItem*)arrayGetItem(leftTaskBarItems,i))->startPossition = oldStartPossition;
     oldStartPossition = oldStartPossitionCopy;
-    drawText(item.text, drawPosition, black);
+    drawText(item.text, newoldStartPossitionCopy, black);
     //drawIcon(item.icon, drawPosition);
-    (*drawPosition) += 5;
-    drawVerticalLine(drawPosition);
+    (*newoldStartPossitionCopy) += 5;
+    drawVerticalLine(newoldStartPossitionCopy);
 
 }
 
@@ -128,5 +135,13 @@ void taskBarDraw(){
     drawBackground();
     drawTaskBarItems(leftTaskBarItems);
     taskBarLockLock = 0;
+}
+
+void taskBarClear(){
+    for(int x = 0; x < getScreenWidth(); x++){
+        for(int y = 0; y < TASKBARHEIGHT; y++){
+            drawScaledPixelsScreen(x, y, black);
+        }
+    }
 }
 

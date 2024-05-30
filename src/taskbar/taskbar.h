@@ -35,6 +35,7 @@ int addTaskBarItem(TaskBarItem item, leftRight position);
 void redrawTaskBarItem(TaskBarItem item, leftRight position, int i);
 
 void taskBarDraw();
+void taskBarClear();
 
 void taskBarInit();
 #endif

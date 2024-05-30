@@ -29,6 +29,7 @@ void (*core3Function)(void) = NULL;
 void startCore(int coreNumber, char* coreName){
     TaskBarItem item = {coreName};
     redrawTaskBarItem(item, LEFT, coreNumber);
+    taskBarDraw();
 }
 
 void endCore(int coreNumber, char* coreName){
