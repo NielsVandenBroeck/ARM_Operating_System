@@ -403,9 +403,9 @@ void drawScreen(int color){
 
 void colorTest(){
     int x = 0;
-    for(int r = 0; r < 256; r += 4){
-        for(int g = 0; g < 256; g += 4){
-            for(int b = 0; b < 256; b += 4){
+    for(int r = 0; r < 256; r += 1){
+        for(int g = 0; g < 256; g += 1){
+            for(int b = 0; b < 256; b += 1){
                 int newColor = ((b & 0xff) << 16) + ((g & 0xff) << 8) + ((r & 0xff));
                 for(int i = 0; i < 5; i++){
                     drawScaledPixelsWindow(x, i, newColor);
@@ -417,8 +417,8 @@ void colorTest(){
 }
 
 void colorTest2(){
-    for(int x = 0; x < width; x++){
-        for(int y = 0; y < height; y++){
+    for(int x = 0; x < getScreenWidth(); x++){
+        for(int y = 0; y < getScreenHeight(); y++){
             switch((y/10)%5){
                 case 0:
                     drawScaledPixelsWindow(x,y,black);

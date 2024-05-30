@@ -6,6 +6,7 @@
 #include "basic/mb.h"
 #include "taskbar/taskbar.h"
 #include "basic/time.h"
+#include "clock/timer.h"
 
 void core1_main(void)
 {
@@ -16,8 +17,6 @@ void core1_main(void)
 }
 
 //compiled program
-
-
 unsigned int read_from_x7() {
     unsigned int value;
     __asm volatile ("mov %0, x7" : "=r" (value));
@@ -93,11 +92,7 @@ void core0_main(void)
 }
 void core2_main(void)
 {
-    for(int i = 0; i < 5; i++){
-        wait_msec(1000);
-        uart_print("Core 2\n");
-        wait_msec(1000);
-    }
+    initTimer();
 }
 
 //compiled program

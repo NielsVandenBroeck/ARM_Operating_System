@@ -1,0 +1,7 @@
+
+#ifndef ARM_OPERATING_SYSTEM_TIMER_H
+#define ARM_OPERATING_SYSTEM_TIMER_H
+
+void initTimer();
+
+#endif //ARM_OPERATING_SYSTEM_TIMER_H

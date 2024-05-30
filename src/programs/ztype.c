@@ -14,6 +14,13 @@ struct letter{
 
 typedef struct letter Letter;
 
+void removeLetters(Letter* letters){
+    for(int i = 0; i < arrayGetLength(letters); i++){
+        Letter* letter = (Letter *)arrayGetItem(letters, i);
+        drawGlyph(letter->c, letter->x, letter->y, black);
+    }
+}
+
 void zTypeGameLoop(){
     int score = 0;
     Array* letters = newArray(0, sizeof(Letter));
@@ -38,7 +45,8 @@ void zTypeGameLoop(){
         char* inputChar = keyboardInterruptionGetChar();
         while (inputChar != NULL){
             if(*inputChar == '&'){
-                printText("Final score: ",CURRENT_COLOR);
+                removeLetters(letters);
+                printText("Game exited Final score: ",CURRENT_COLOR);
                 printInt(score, CURRENT_COLOR);
                 return;
             }
@@ -65,7 +73,8 @@ void zTypeGameLoop(){
             drawGlyph(letter->c, letter->x, letter->y, black);
             letter->y += letter->speed;
             if(letter->y > getWindowHeight()-10){
-                printText("Final score: ",CURRENT_COLOR);
+                removeLetters(letters);
+                printText("Game over. Final score: ",CURRENT_COLOR);
                 printInt(score, CURRENT_COLOR);
                 return;
             }
@@ -82,7 +91,6 @@ void ztype(char* params){
     printText("Starting ztype.\n", CURRENT_COLOR);
     clearConsole();
     zTypeGameLoop();
-    drawScreen(black);
     drawFromBuffer();
 }
 

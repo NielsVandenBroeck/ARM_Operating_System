@@ -70,6 +70,12 @@ void clearBall(Ball* ball){
     }
 }
 
+void clearScore(Score* score){
+    drawGlyph(score->player1 + '0',100,100,black);
+    drawGlyph('-',110,100,black);
+    drawGlyph(score->player2 + '0',120,100,black);
+}
+
 
 void goLeft(Paddle* player){
     if(player->x > 80){
@@ -178,22 +184,26 @@ void pongGameLoop(){
             char* inputChar = keyboardInterruptionGetChar();
             while (inputChar != NULL){
                 if(*inputChar == '&'){
+                    clearBall(&ball);
+                    clearPaddle(&player1);
+                    clearPaddle(&player2);
+                    clearScore(&score);
                     printText("Final score: ",CURRENT_COLOR);
                     printInt(score.player1, CURRENT_COLOR);
                     printChar('-', CURRENT_COLOR);
                     printInt(score.player2, CURRENT_COLOR);
                     return;
                 }
-                if(*inputChar == 'q'){
+                if(*inputChar == 'a'){
                     goLeft(&player1);
                 }
                 if(*inputChar == 'd'){
                     goRight(&player1);
                 }
-                if(*inputChar == ':'){
+                if(*inputChar == '.'){
                     goLeft(&player2);
                 }
-                if(*inputChar == '='){
+                if(*inputChar == '/'){
                     goRight(&player2);
                 }
                 inputChar = keyboardInterruptionGetChar();
@@ -227,6 +237,5 @@ void pong(char* params){
     setRotation(0);
     setScaleSize(1);
     pongGameLoop();
-    drawScreen(black);
     drawFromBuffer();
 }

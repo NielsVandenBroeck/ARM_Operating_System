@@ -11,7 +11,10 @@
 
 struct taskBarItem{
     char* text;
+    //Automatically set
+    int startPossition;
     //int icon[16][16]
+    int length;
 };
 
 typedef struct taskBarItem TaskBarItem;
@@ -33,6 +36,7 @@ int addTaskBarItem(TaskBarItem item, leftRight position);
 void redrawTaskBarItem(TaskBarItem item, leftRight position, int i);
 
 void taskBarDraw();
+void taskBarClear();
 
 void taskBarInit();
 #endif

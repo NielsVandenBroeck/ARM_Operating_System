@@ -45,7 +45,7 @@ void* arrayGetItem(Array* array, int i){
 }
 
 void arraySetItem(Array* array, int i, void* item){
-    uart_print("array set\n");
+   // uart_print("array set\n");
     if(array == NULL || i < 0){
         throw("Index out of range");
         return 0;

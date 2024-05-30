@@ -9,8 +9,10 @@
 Array* leftTaskBarItems = NULL;
 Array* rightTaskBarItems = NULL;
 
+
 int xDrawPosLeft = 5;
 int xDrawPosRight = 0;
+
 
 void taskBarInit(){
     leftTaskBarItems = newArray(0,sizeof (TaskBarItem));
@@ -34,12 +36,28 @@ void redrawTaskBarItem(TaskBarItem item, leftRight position, int i){
     if(i == NULL){
         return;
     }
+
+    int oldStartPossition = (*(TaskBarItem*)arrayGetItem(leftTaskBarItems, i)).startPossition;
+    for(int y = OFFSET + FONT_HEIGHT/2; y < OFFSET + FONT_HEIGHT/2 + FONT_HEIGHT; y++){
+        for(int x = oldStartPossition; x < oldStartPossition+(*(TaskBarItem*)arrayGetItem(leftTaskBarItems, i)).length; x++){
+            drawScaledPixelsScreen(x,y,BACKGROUNDCOLOR);
+        }
+    }
+
+    item.startPossition = oldStartPossition;
     if(position == LEFT){
         arraySetItem(leftTaskBarItems, i, &item);
     }
     else{
         arraySetItem(rightTaskBarItems, i, &item);
     }
+    ((TaskBarItem*)arrayGetItem(leftTaskBarItems,i))->startPossition = oldStartPossition;
+    drawText(item.text, &oldStartPossition, black);
+    //drawIcon(item.icon, &oldStartPossition);
+    ((TaskBarItem*)arrayGetItem(leftTaskBarItems,i))->length = oldStartPossition-((TaskBarItem*)arrayGetItem(leftTaskBarItems,i))->startPossition;
+    (oldStartPossition) += 5;
+    drawVerticalLine(&oldStartPossition);
+
 }
 
 void drawBackground(){
@@ -50,12 +68,12 @@ void drawBackground(){
     }
 }
 
-void drawText(char* text, int* xPos){
+void drawText(char* text, int* xPos, int color){
     char *p = text;
     int i = 0;
     for (char c = *p; c != '\0'; c = *++p)
     {
-        drawGlyphScreen(c, *xPos, OFFSET + FONT_HEIGHT/2, black);
+        drawGlyphScreen(c, *xPos, OFFSET + FONT_HEIGHT/2, color);
         (*xPos) += FONT_WIDTH;
     }
 }
@@ -88,8 +106,10 @@ void drawTaskBarItems(Array* items){
     for(int i = 0; i < size; i++){
         TaskBarItem item = (*(TaskBarItem*)arrayGetItem(items,i));
         int* drawPosition = &xDrawPosLeft;
-        drawText(item.text, drawPosition);
+        ((TaskBarItem*)arrayGetItem(items,i))->startPossition = *drawPosition;
+        drawText(item.text, drawPosition, black);
         //drawIcon(item.icon, drawPosition);
+        ((TaskBarItem*)arrayGetItem(items,i))->length = *drawPosition-((TaskBarItem*)arrayGetItem(items,i))->startPossition;
         (*drawPosition) += 5;
         drawVerticalLine(drawPosition);
     }
@@ -106,5 +126,13 @@ void taskBarDraw(){
     drawBackground();
     drawTaskBarItems(leftTaskBarItems);
     taskBarLockLock = 0;
+}
+
+void taskBarClear(){
+    for(int x = 0; x < getScreenWidth(); x++){
+        for(int y = 0; y < TASKBARHEIGHT; y++){
+            drawScaledPixelsScreen(x, y, black);
+        }
+    }
 }
 

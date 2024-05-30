@@ -35,7 +35,6 @@ void startCore(int coreNumber, char* coreName){
 void endCore(int coreNumber, char* coreName){
     TaskBarItem item1 = {coreName};
     redrawTaskBarItem(item1, LEFT, coreNumber);
-    taskBarDraw();
     while(1){
         wait_msec(5000);
     }
