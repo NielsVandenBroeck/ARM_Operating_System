@@ -92,7 +92,7 @@ void goLeft(Paddle* player){
 }
 
 void goRight(Paddle* player){
-    if(player->x < 1840){
+    if(player->x < getWindowWidth()-80){
         player->x += 20;
         for(int y = player->y-15; y < player->y+15; y++){
             for(int x = player->x+50; x < player->x+70; x++){
@@ -122,7 +122,7 @@ void updateBall(Ball* ball, int multiplier){
 
 void checkCollision(Paddle* player1, Paddle* player2, Ball* ball){
     //check if ball is about to touch a wall
-    if(ball->x <= 5 || ball->x >= 1915){
+    if(ball->x <= 5 || ball->x >= getWindowWidth()-5){
         ball->dx = -ball->dx;
     }
     // Collision with paddles
@@ -175,9 +175,9 @@ void pongGameLoop(){
     while(1){
         Paddle player1, player2;
         Ball ball;
-        initPaddle(&player1, 960, 1015);
-        initPaddle(&player2, 960, 65);
-        initBall(&ball,960, 540);
+        initPaddle(&player1, getWindowWidth()/2, getWindowHeight()-35);
+        initPaddle(&player2, getWindowWidth()/2, 35);
+        initBall(&ball,getWindowWidth()/2, getWindowHeight()/2);
         while(1){
             int startTime = 0;
             start_timer(&startTime);
@@ -235,7 +235,7 @@ void pong(char* params){
     printText("Starting pong.", CURRENT_COLOR);
     clearConsole();
     setRotation(0);
-    setScaleSize(1);
+    //setScaleSize(1);
     pongGameLoop();
     drawFromBuffer();
 }
