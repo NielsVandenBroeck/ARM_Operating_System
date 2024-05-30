@@ -3,6 +3,7 @@
 #include "../graphicInterface/framebuffer.h"
 #include "../basic/keyboard_interrupts.h"
 #include "../basic/time.h"
+#include "../taskbar/taskbar.h"
 #include <stddef.h>
 
 struct paddle{
@@ -80,11 +81,13 @@ void clearScore(Score* score){
 void goLeft(Paddle* player){
     if(player->x > 80){
         player->x -= 20;
-        for(int y = player->y-15; y < player->y+15; y++){
-            for(int x = player->x-70; x < player->x-50; x++){
+        for(int x = player->x-70; x < player->x-50; x++){
+            for(int y = player->y-15; y < player->y+15; y++){
                 drawScaledPixelsWindow(x,y,white);
             }
-            for(int x = player->x+70; x < player->x+90; x++){
+        }
+        for(int x = player->x+70; x < player->x+90; x++){
+            for(int y = player->y-15; y < player->y+15; y++){
                 drawScaledPixelsWindow(x,y,black);
             }
         }
@@ -94,11 +97,13 @@ void goLeft(Paddle* player){
 void goRight(Paddle* player){
     if(player->x < getWindowWidth()-80){
         player->x += 20;
-        for(int y = player->y-15; y < player->y+15; y++){
-            for(int x = player->x+50; x < player->x+70; x++){
+        for(int x = player->x+50; x < player->x+70; x++){
+            for(int y = player->y-15; y < player->y+15; y++){
                 drawScaledPixelsWindow(x,y,white);
             }
-            for(int x = player->x-90; x < player->x-70; x++){
+        }
+        for(int x = player->x-90; x < player->x-70; x++){
+            for(int y = player->y-15; y < player->y+15; y++){
                 drawScaledPixelsWindow(x,y,black);
             }
         }
@@ -169,7 +174,7 @@ void updateScore(Score* score, int player){
     }
 }
 
-volatile void pongGameLoop(){
+void pongGameLoop(){
     Score score;
     initScore(&score);
     while(1){
@@ -179,7 +184,7 @@ volatile void pongGameLoop(){
         initPaddle(&player2, getWindowWidth()/2, 35);
         initBall(&ball,getWindowWidth()/2, getWindowHeight()/2);
         while(1){
-            unsigned long startTime = 0;
+            unsigned int startTime = 0;
             start_timer(&startTime);
             char* inputChar = keyboardInterruptionGetChar();
             while (inputChar != NULL){
@@ -208,19 +213,41 @@ volatile void pongGameLoop(){
                 }
                 inputChar = keyboardInterruptionGetChar();
             }
-            wait_msec(50);
+            wait_msec(10);
             int elapsedTime = elapsed_time(startTime);
             updateBall(&ball, elapsedTime/10);
             checkCollision(&player1, &player2, &ball);
             if(ball.y < 5){
                 updateScore(&score, 1);
+                if(score.player1 == 5){
+                    clearBall(&ball);
+                    clearPaddle(&player1);
+                    clearPaddle(&player2);
+                    clearScore(&score);
+                    printText("Player 1 Won! Final score: ",CURRENT_COLOR);
+                    printInt(score.player1, CURRENT_COLOR);
+                    printChar('-', CURRENT_COLOR);
+                    printInt(score.player2, CURRENT_COLOR);
+                    return;
+                }
                 clearPaddle(&player1);
                 clearPaddle(&player2);
                 clearBall(&ball);
                 break;
             }
-            if(ball.y > getWindowHeight() - 5){
+            if(ball.y > getWindowHeight()-5){
                 updateScore(&score, 2);
+                if(score.player1 == 5){
+                    clearBall(&ball);
+                    clearPaddle(&player1);
+                    clearPaddle(&player2);
+                    clearScore(&score);
+                    printText("Player 2 Won! Final score: ",CURRENT_COLOR);
+                    printInt(score.player1, CURRENT_COLOR);
+                    printChar('-', CURRENT_COLOR);
+                    printInt(score.player2, CURRENT_COLOR);
+                    return;
+                }
                 clearPaddle(&player1);
                 clearPaddle(&player2);
                 clearBall(&ball);
@@ -232,10 +259,11 @@ volatile void pongGameLoop(){
 
 
 void pong(char* params){
-    printText("Starting pong.", CURRENT_COLOR);
+    printText("Starting pong.\n", CURRENT_COLOR);
     clearConsole();
     setRotation(0);
-    //setScaleSize(1);
+    taskBarClear();
     pongGameLoop();
+    taskBarDraw();
     drawFromBuffer();
 }

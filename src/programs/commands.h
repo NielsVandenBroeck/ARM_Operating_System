@@ -11,6 +11,7 @@
 #include "reboot.h"
 #include "pong.h"
 #include "ztype.h"
+#include "clear.h"
 
 typedef void (*Function)(char*);
 struct program {
@@ -30,7 +31,8 @@ static Program programs[] = {
         {"echo", echo},
         {"reboot",reboot},
         {"pong", pong},
-        {"ztype", ztype}
+        {"ztype", ztype},
+        {"clear", clear}
         };
 
 #endif //ARM_OPERATING_SYSTEM_COMMANDS_C

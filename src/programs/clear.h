@@ -1,0 +1,7 @@
+
+#ifndef ARM_OPERATING_SYSTEM_CLEAR_H
+#define ARM_OPERATING_SYSTEM_CLEAR_H
+
+void clear(char* params);
+
+#endif //ARM_OPERATING_SYSTEM_CLEAR_H
