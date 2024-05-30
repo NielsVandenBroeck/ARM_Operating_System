@@ -11,6 +11,8 @@
 
 struct taskBarItem{
     char* text;
+    //Automatically set
+    int startPossition;
     //int icon[16][16]
 };
 
