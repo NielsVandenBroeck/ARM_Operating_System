@@ -11,13 +11,13 @@ void wait_msec(unsigned int n)
     do{asm volatile ("mrs %0, cntpct_el0" : "=r"(r));}while(r<t);
 }
 
-void start_timer(int* start_time)
+void start_timer(unsigned long* start_time)
 {
     // Read the current counter
     asm volatile ("mrs %0, cntpct_el0" : "=r"(*start_time));
 }
 
-int elapsed_time(int start_time)
+unsigned long elapsed_time(unsigned long start_time)
 {
     register unsigned long f, t;
     // Get the current counter frequency

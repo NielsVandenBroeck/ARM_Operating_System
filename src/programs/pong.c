@@ -169,7 +169,7 @@ void updateScore(Score* score, int player){
     }
 }
 
-void pongGameLoop(){
+volatile void pongGameLoop(){
     Score score;
     initScore(&score);
     while(1){
@@ -179,7 +179,7 @@ void pongGameLoop(){
         initPaddle(&player2, getWindowWidth()/2, 35);
         initBall(&ball,getWindowWidth()/2, getWindowHeight()/2);
         while(1){
-            int startTime = 0;
+            unsigned long startTime = 0;
             start_timer(&startTime);
             char* inputChar = keyboardInterruptionGetChar();
             while (inputChar != NULL){
@@ -208,7 +208,7 @@ void pongGameLoop(){
                 }
                 inputChar = keyboardInterruptionGetChar();
             }
-            wait_msec(10);
+            wait_msec(50);
             int elapsedTime = elapsed_time(startTime);
             updateBall(&ball, elapsedTime/10);
             checkCollision(&player1, &player2, &ball);
@@ -219,7 +219,7 @@ void pongGameLoop(){
                 clearBall(&ball);
                 break;
             }
-            if(ball.y > 1075){
+            if(ball.y > getWindowHeight() - 5){
                 updateScore(&score, 2);
                 clearPaddle(&player1);
                 clearPaddle(&player2);
