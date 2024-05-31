@@ -222,7 +222,7 @@ volatile void pongGameLoop(){
             checkCollision(&player1, &player2, &ball);
             if(ball.y < 5){
                 updateScore(&score, 1);
-                if(score.player1 == 10){
+                if(score.player1 == 5){
                     clearBall(&ball);
                     clearPaddle(&player1);
                     clearPaddle(&player2);
@@ -240,7 +240,7 @@ volatile void pongGameLoop(){
             }
             if(ball.y > getWindowHeight()-5){
                 updateScore(&score, 2);
-                if(score.player1 == 10){
+                if(score.player2 == 5){
                     clearBall(&ball);
                     clearPaddle(&player1);
                     clearPaddle(&player2);
@@ -265,9 +265,8 @@ void pong(char* params){
     printText("Starting pong.\n", CURRENT_COLOR);
     clearConsole();
     setRotation(0);
-    taskH
-    ide(true);
+    taskBarHide(true);
     pongGameLoop();
-    taskHide(false);
+    taskBarHide(false);
     drawFromBuffer();
 }

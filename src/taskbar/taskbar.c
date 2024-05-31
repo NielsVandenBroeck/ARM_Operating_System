@@ -137,7 +137,7 @@ void taskBarDraw(){
     taskBarLock = 0;
 }
 
-void taskHide(bool hide){
+void taskBarHide(bool hide){
     hideTaskBar = hide;
     if(hide){
         taskBarClear();
