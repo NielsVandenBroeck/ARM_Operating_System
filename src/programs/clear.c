@@ -6,6 +6,8 @@
 void clear(char* params){
     drawScreen(black);
     taskBarDraw();
-    drawFromBuffer();
+    clearConsole();
+    clearTextBuffer();
+    initiatePreText();
     printText("Cleared screen.", CURRENT_COLOR);
 }
