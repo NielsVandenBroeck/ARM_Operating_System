@@ -216,7 +216,7 @@ volatile void pongGameLoop(){
                 }
                 inputChar = keyboardInterruptionGetChar();
             }
-            wait_msec(10);
+            wait_msec(50);
             int elapsedTime = elapsed_time(startTime);
             updateBall(&ball, elapsedTime/10);
             checkCollision(&player1, &player2, &ball);
@@ -265,8 +265,9 @@ void pong(char* params){
     printText("Starting pong.\n", CURRENT_COLOR);
     clearConsole();
     setRotation(0);
-    //taskBarClear();
+    taskH
+    ide(true);
     pongGameLoop();
-    //taskBarDraw();
+    taskHide(false);
     drawFromBuffer();
 }

@@ -37,6 +37,6 @@ void redrawTaskBarItem(TaskBarItem item, leftRight position, int i);
 
 void taskBarDraw();
 void taskBarClear();
-
+void taskHide(bool hide);
 void taskBarInit();
 #endif

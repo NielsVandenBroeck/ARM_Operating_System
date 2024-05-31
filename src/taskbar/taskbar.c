@@ -12,6 +12,7 @@ Array* rightTaskBarItems = NULL;
 
 int xDrawPosLeft = 5;
 int xDrawPosRight = 0;
+static bool hideTaskBar = false;
 
 
 void taskBarInit(){
@@ -36,11 +37,14 @@ void redrawTaskBarItem(TaskBarItem item, leftRight position, int i){
     if(i == NULL){
         return;
     }
+    int oldStartPossition = (*(TaskBarItem *) arrayGetItem(leftTaskBarItems, i)).startPossition;
 
-    int oldStartPossition = (*(TaskBarItem*)arrayGetItem(leftTaskBarItems, i)).startPossition;
-    for(int y = OFFSET + FONT_HEIGHT/2; y < OFFSET + FONT_HEIGHT/2 + FONT_HEIGHT; y++){
-        for(int x = oldStartPossition; x < oldStartPossition+(*(TaskBarItem*)arrayGetItem(leftTaskBarItems, i)).length; x++){
-            drawScaledPixelsScreen(x,y,BACKGROUNDCOLOR);
+    if(!hideTaskBar) {
+        for (int y = OFFSET + FONT_HEIGHT / 2; y < OFFSET + FONT_HEIGHT / 2 + FONT_HEIGHT; y++) {
+            for (int x = oldStartPossition;
+                 x < oldStartPossition + (*(TaskBarItem *) arrayGetItem(leftTaskBarItems, i)).length; x++) {
+                drawScaledPixelsScreen(x, y, BACKGROUNDCOLOR);
+            }
         }
     }
 
@@ -51,13 +55,15 @@ void redrawTaskBarItem(TaskBarItem item, leftRight position, int i){
     else{
         arraySetItem(rightTaskBarItems, i, &item);
     }
-    ((TaskBarItem*)arrayGetItem(leftTaskBarItems,i))->startPossition = oldStartPossition;
-    drawText(item.text, &oldStartPossition, black);
-    //drawIcon(item.icon, &oldStartPossition);
-    ((TaskBarItem*)arrayGetItem(leftTaskBarItems,i))->length = oldStartPossition-((TaskBarItem*)arrayGetItem(leftTaskBarItems,i))->startPossition;
-    (oldStartPossition) += 5;
-    drawVerticalLine(&oldStartPossition);
 
+    if(!hideTaskBar){
+        ((TaskBarItem*)arrayGetItem(leftTaskBarItems,i))->startPossition = oldStartPossition;
+        drawText(item.text, &oldStartPossition, black);
+        //drawIcon(item.icon, &oldStartPossition);
+        ((TaskBarItem*)arrayGetItem(leftTaskBarItems,i))->length = oldStartPossition-((TaskBarItem*)arrayGetItem(leftTaskBarItems,i))->startPossition;
+        (oldStartPossition) += 5;
+        drawVerticalLine(&oldStartPossition);
+    }
 }
 
 void drawBackground(){
@@ -99,6 +105,9 @@ void drawVerticalLine(int* xPos){
 }
 
 void drawTaskBarItems(Array* items){
+    if(hideTaskBar) {
+        return;
+    }
     int size = arrayGetLength(items);
     uart_print("array lenght:");
     uart_printInt(size);
@@ -115,17 +124,29 @@ void drawTaskBarItems(Array* items){
     }
 }
 
-int taskBarLockLock = 0;
+int taskBarLock = 0;
 void taskBarDraw(){
-    while(taskBarLockLock){
+    while(taskBarLock){
         wait_msec(500);
     }
-    taskBarLockLock = 1;
+    taskBarLock = 1;
     xDrawPosLeft = 5;
     xDrawPosRight = 0;
     drawBackground();
     drawTaskBarItems(leftTaskBarItems);
-    taskBarLockLock = 0;
+    taskBarLock = 0;
+}
+
+void taskHide(bool hide){
+    hideTaskBar = hide;
+    if(hide){
+        taskBarClear();
+        setYWindowOffsets(0, TOP);
+    }
+    else{
+        setYWindowOffsets(TASKBARHEIGHT, TOP);
+        taskBarDraw();
+    }
 }
 
 void taskBarClear(){
