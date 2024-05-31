@@ -14,7 +14,7 @@ struct letter{
 
 typedef struct letter Letter;
 
-void removeLetters(Letter* letters){
+void removeLetters(Array* letters){
     for(int i = 0; i < arrayGetLength(letters); i++){
         Letter* letter = (Letter *)arrayGetItem(letters, i);
         drawGlyph(letter->c, letter->x, letter->y, black);
@@ -32,12 +32,12 @@ void zTypeGameLoop(){
                 likeliness-=2;
             }
         }
-        if(random(likeliness) == 0){
+        if(random(likeliness)  == 0){
             Letter l = {
                     'a' + random(26),
                     random(getWindowWidth()-20)+10,
                     10,
-                    random(51-likeliness)+1
+                    random(50-likeliness)+1
             };
             drawGlyph(l.c,l.x,l.y,CURRENT_COLOR);
             arrayAppendItem(letters,&l);
