@@ -176,9 +176,8 @@ void updateScore(Score* score, int player){
         drawGlyph(score->player2 + '0',score->x+10,score->y,white);
     }
 }
-
-volatile void pongGameLoop(){
-    Score score;
+Score score;
+volatile char* pongGameLoop(){
     initScore(&score);
     while(1){
         Paddle player1, player2;
@@ -196,11 +195,7 @@ volatile void pongGameLoop(){
                     clearPaddle(&player1);
                     clearPaddle(&player2);
                     clearScore(&score);
-                    printText("Final score: ",CURRENT_COLOR);
-                    printInt(score.player1, CURRENT_COLOR);
-                    printChar('-', CURRENT_COLOR);
-                    printInt(score.player2, CURRENT_COLOR);
-                    return;
+                    return "Final score: ";
                 }
                 if(*inputChar == 'a'){
                     goLeft(&player1);
@@ -227,11 +222,7 @@ volatile void pongGameLoop(){
                     clearPaddle(&player1);
                     clearPaddle(&player2);
                     clearScore(&score);
-                    printText("Player 1 Won! Final score: ",CURRENT_COLOR);
-                    printInt(score.player1, CURRENT_COLOR);
-                    printChar('-', CURRENT_COLOR);
-                    printInt(score.player2, CURRENT_COLOR);
-                    return;
+                    return "Player 1 Won! Final score: ";
                 }
                 clearPaddle(&player1);
                 clearPaddle(&player2);
@@ -245,11 +236,7 @@ volatile void pongGameLoop(){
                     clearPaddle(&player1);
                     clearPaddle(&player2);
                     clearScore(&score);
-                    printText("Player 2 Won! Final score: ",CURRENT_COLOR);
-                    printInt(score.player1, CURRENT_COLOR);
-                    printChar('-', CURRENT_COLOR);
-                    printInt(score.player2, CURRENT_COLOR);
-                    return;
+                    return "Player 2 Won! Final score: ";
                 }
                 clearPaddle(&player1);
                 clearPaddle(&player2);
@@ -266,7 +253,11 @@ void pong(char* params){
     clearConsole();
     setRotation(0);
     taskBarHide(true);
-    pongGameLoop();
+    char* returnText = pongGameLoop();
     taskBarHide(false);
+    printText(returnText,CURRENT_COLOR);
+    printInt(score.player1, CURRENT_COLOR);
+    printChar('-', CURRENT_COLOR);
+    printInt(score.player2, CURRENT_COLOR);
     drawFromBuffer();
 }
