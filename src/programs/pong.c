@@ -17,6 +17,7 @@ struct ball{
 
 struct score{
    int player1, player2;
+   int x,y;
 };
 
 typedef struct paddle Paddle;
@@ -37,9 +38,9 @@ void initBall(Ball* ball, int xPos, int yPos) {
     ball->x = xPos;
     ball->y = yPos;
 
-    int values[] = {-2, -1, 1, 2};
-    ball->dx = values[random(4)];
-    ball->dy = values[random(4)];
+    int values[] = {-1, 1};
+    ball->dx = values[random(2)];
+    ball->dy = values[random(2)];
     for(int y = ball->y-3; y < ball->y+3; y++){
         for(int x = ball->x-3; x < ball->x+3; x++){
             drawScaledPixelsWindow(x,y,white);
@@ -50,9 +51,11 @@ void initBall(Ball* ball, int xPos, int yPos) {
 void initScore(Score* score){
     score->player1 = 0;
     score->player2 = 0;
-    drawGlyph('0',100,100,white);
-    drawGlyph('-',110,100,white);
-    drawGlyph('0',120,100,white);
+    score->x = getWindowWidth()/2;
+    score->y = (getWindowHeight()/2)-50;
+    drawGlyph('0',score->x-10,score->y,white);
+    drawGlyph('-',score->x,score->y,white);
+    drawGlyph('0',score->x+10,score->y,white);
 }
 
 void clearPaddle(Paddle* player){
@@ -72,9 +75,9 @@ void clearBall(Ball* ball){
 }
 
 void clearScore(Score* score){
-    drawGlyph(score->player1 + '0',100,100,black);
-    drawGlyph('-',110,100,black);
-    drawGlyph(score->player2 + '0',120,100,black);
+    drawGlyph(score->player1 + '0',score->x-10,score->y,black);
+    drawGlyph('-',score->x,score->y,black);
+    drawGlyph(score->player2 + '0',score->x+10,score->y,black);
 }
 
 
@@ -163,18 +166,18 @@ void checkCollision(Paddle* player1, Paddle* player2, Ball* ball){
 
 void updateScore(Score* score, int player){
     if(player == 1){
-        drawGlyph(score->player1 + '0',100,100,black);
+        drawGlyph(score->player1 + '0',score->x-10,score->y,black);
         score->player1++;
-        drawGlyph(score->player1 + '0',100,100,white);
+        drawGlyph(score->player1 + '0',score->x-10,score->y,white);
     }
     else{
-        drawGlyph(score->player2 + '0',120,100,black);
+        drawGlyph(score->player2 + '0',score->x+10,score->y,black);
         score->player2++;
-        drawGlyph(score->player2 + '0',120,100,white);
+        drawGlyph(score->player2 + '0',score->x+10,score->y,white);
     }
 }
 
-void pongGameLoop(){
+volatile void pongGameLoop(){
     Score score;
     initScore(&score);
     while(1){
@@ -184,7 +187,7 @@ void pongGameLoop(){
         initPaddle(&player2, getWindowWidth()/2, 35);
         initBall(&ball,getWindowWidth()/2, getWindowHeight()/2);
         while(1){
-            unsigned int startTime = 0;
+            unsigned long startTime = 0;
             start_timer(&startTime);
             char* inputChar = keyboardInterruptionGetChar();
             while (inputChar != NULL){
@@ -219,7 +222,7 @@ void pongGameLoop(){
             checkCollision(&player1, &player2, &ball);
             if(ball.y < 5){
                 updateScore(&score, 1);
-                if(score.player1 == 5){
+                if(score.player1 == 10){
                     clearBall(&ball);
                     clearPaddle(&player1);
                     clearPaddle(&player2);
@@ -237,7 +240,7 @@ void pongGameLoop(){
             }
             if(ball.y > getWindowHeight()-5){
                 updateScore(&score, 2);
-                if(score.player1 == 5){
+                if(score.player1 == 10){
                     clearBall(&ball);
                     clearPaddle(&player1);
                     clearPaddle(&player2);
@@ -262,8 +265,8 @@ void pong(char* params){
     printText("Starting pong.\n", CURRENT_COLOR);
     clearConsole();
     setRotation(0);
-    taskBarClear();
+    //taskBarClear();
     pongGameLoop();
-    taskBarDraw();
+    //taskBarDraw();
     drawFromBuffer();
 }

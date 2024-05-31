@@ -42,16 +42,16 @@ int uptime_msec()
 }
 
 int random(unsigned int range) {
-    static int seed = 0;
+    static long seed = 0;
 
     // If the seed is zero, initialize it with the current time
     if (seed == 0) {
         seed = uptime_msec();
     }
 
-    const unsigned int a = 1664525;
-    const unsigned int c = 1013904223;
-    const unsigned int m = 0xFFFFFFFF;
+    const unsigned long a = 1664525;
+    const unsigned long c = 1013904223;
+    const unsigned long m = 0xFFFFFFFF;
 
     seed = (a * seed + c) % m;
 
